@@ -20,22 +20,6 @@ const navItems = [
   "Settings",
 ];
 
-const initialDonations = [
-  { donor: "Ritika Sharma", amount: 5000, mode: "UPI", status: "Verified" },
-  {
-    donor: "Daniel Thomas",
-    amount: 12000,
-    mode: "Bank Transfer",
-    status: "Pending Receipt",
-  },
-  {
-    donor: "A. Joseph Family",
-    amount: 2500,
-    mode: "QR Payment",
-    status: "Verified",
-  },
-];
-
 const initialGalleryItems = [
   { title: "Before Fire Hero", type: "Video", section: "Before Fire" },
   { title: "After Fire Gallery 12", type: "Image", section: "After Fire" },
@@ -89,7 +73,7 @@ function formatDateTime(value) {
 function AdminDashboard() {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState("Overview");
-  const [donations, setDonations] = useState(initialDonations);
+  const [donations, setDonations] = useState([]);
   const [galleryItems, setGalleryItems] = useState(initialGalleryItems);
   const [updates, setUpdates] = useState(initialUpdates);
   const [documents, setDocuments] = useState(initialDocuments);
@@ -733,34 +717,7 @@ function AdminDashboard() {
           {overviewCards.map((item) => card(item.label, item.value, item.note))}
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          {shell(
-            "Recent Donations",
-            "Latest donor activity",
-            <div className="max-h-[31rem] space-y-3 overflow-y-auto pr-2">
-              {donations.map((item, index) => (
-                <div
-                  key={item._id || `${item.donor}-${index}`}
-                  className="rounded-[22px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4"
-                >
-                  <p className="font-serif text-[1.35rem] text-white">
-                    {item.donor}
-                  </p>
-                  <p className="mt-1 text-sm text-white/65">
-                    {formatCurrency(item.amount)} • {item.mode} • {item.status}
-                  </p>
-                </div>
-              ))}
-            </div>,
-            <button
-              type="button"
-              onClick={() => setActiveView("Donations")}
-              className="rounded-full border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-2 font-sans text-xs uppercase tracking-[0.2em] text-white/76"
-            >
-              Open Module
-            </button>,
-          )}
-
+        <div className="grid gap-6">
           {shell(
             "Quick Actions",
             "Working shortcuts",
