@@ -172,8 +172,6 @@ function AdminDashboard() {
         settingsResult,
       ] = results;
 
-      // Admin listing removed from dashboard; skip loading admins.
-
       if (donationsResult.status === "fulfilled") {
         setDonations(donationsResult.value.data || []);
       } else {

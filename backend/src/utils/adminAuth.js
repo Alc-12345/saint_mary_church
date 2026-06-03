@@ -7,6 +7,8 @@ const LEGACY_ADMIN_EMAIL = "admin@saintmaryschurchajmer.com";
 const DEFAULT_ADMIN_PASSWORD = "Admin@123";
 const DEFAULT_ADMIN_NAME = "Church Admin";
 
+const MAX_ADMIN_ACCOUNTS = Number(process.env.MAX_ADMIN_ACCOUNTS || 5);
+
 function getDefaultAdminCredentials() {
   return {
     email: (process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL).trim().toLowerCase(),
@@ -174,6 +176,11 @@ export async function createAdminAccount({ email, password, name }) {
 
   if (!normalizedEmail || !password || !trimmedName) {
     throw new Error("Name, email, and password are required.");
+  }
+
+  const adminCount = await Admin.countDocuments();
+  if (adminCount >= MAX_ADMIN_ACCOUNTS) {
+    throw new Error(`Maximum admin accounts reached. Only ${MAX_ADMIN_ACCOUNTS} admin accounts are allowed.`);
   }
 
   const existingAdmin = await Admin.findOne({ email: normalizedEmail });
