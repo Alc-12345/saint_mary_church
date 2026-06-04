@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import church from "../assets/church-home.avif";
 import {
   buildFundingCampaigns,
-  donationCampaigns,
+
 } from "../data/donationCampaigns";
 import { apiGet } from "../lib/api";
 import useSiteSettings from "../hooks/useSiteSettings";
@@ -105,7 +105,7 @@ function FundingCard({ campaign }) {
 
 function Hero() {
   const [showHeroText, setShowHeroText] = useState(false);
-  const [campaigns, setCampaigns] = useState(donationCampaigns);
+  const [campaigns, setCampaigns] = useState([]);
   const siteSettings = useSiteSettings();
 
   useEffect(() => {
@@ -120,10 +120,7 @@ function Hero() {
     Promise.all([apiGet("/donation-campaigns"), apiGet("/donations")])
       .then(([campaignResponse, donationResponse]) => {
         setCampaigns(
-          buildFundingCampaigns(
-            campaignResponse.data || donationCampaigns,
-            donationResponse.data || [],
-          ),
+          buildFundingCampaigns(campaignResponse.data || [], donationResponse.data || []),
         );
       })
       .catch((error) => {

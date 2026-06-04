@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import churchHome from "../assets/church-home.avif";
-import { donationCampaigns as defaultDonationCampaigns } from "../data/donationCampaigns";
 import { clearAdminToken } from "../lib/adminAuth";
 import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from "../lib/api";
 import { defaultSiteSettings, mergeSiteSettings } from "../lib/siteSettings";
@@ -77,7 +76,7 @@ function AdminDashboard() {
   const [galleryItems, setGalleryItems] = useState(initialGalleryItems);
   const [updates, setUpdates] = useState(initialUpdates);
   const [documents, setDocuments] = useState(initialDocuments);
-  const [campaigns, setCampaigns] = useState(defaultDonationCampaigns);
+  const [campaigns, setCampaigns] = useState([]);
   const [siteSettings, setSiteSettings] = useState(defaultSiteSettings);
   const [siteSettingsDraft, setSiteSettingsDraft] = useState(defaultSiteSettings);
   
@@ -179,7 +178,7 @@ function AdminDashboard() {
       }
 
       if (campaignsResult.status === "fulfilled") {
-        const nextCampaigns = campaignsResult.value.data || defaultDonationCampaigns;
+        const nextCampaigns = campaignsResult.value.data || [];
         setCampaigns(nextCampaigns);
         setDonationForm((current) => ({
           ...current,

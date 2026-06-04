@@ -3,7 +3,7 @@ import qrImage from "../assets/scanner.avif";
 import churchHome from "../assets/church-home.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { donationCampaigns } from "../data/donationCampaigns";
+import { buildFundingCampaigns, } from "../data/donationCampaigns";
 import { apiGet, apiPost } from "../lib/api";
 import {
   isValidEmailAddress,
@@ -22,7 +22,7 @@ const initialForm = {
 function DonateDetails() {
   const [formData, setFormData] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
-  const [campaigns, setCampaigns] = useState(donationCampaigns);
+  const [campaigns, setCampaigns] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
@@ -33,7 +33,7 @@ function DonateDetails() {
   useEffect(() => {
     apiGet("/donation-campaigns")
       .then((response) => {
-        const nextCampaigns = response.data || donationCampaigns;
+        const nextCampaigns = response.data || [];
         setCampaigns(nextCampaigns);
         setFormData((current) => ({
           ...current,

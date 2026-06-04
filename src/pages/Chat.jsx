@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import churchHome from "../assets/church-home.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { donationCampaigns } from "../data/donationCampaigns";
+import { buildFundingCampaigns,} from "../data/donationCampaigns";
 import useSiteSettings from "../hooks/useSiteSettings";
 import { apiGet, apiPost } from "../lib/api";
 import { getWhatsAppNumber } from "../lib/siteSettings";
@@ -39,7 +39,7 @@ function WhatsAppIcon() {
 
 function Chat() {
   const [activeTab, setActiveTab] = useState("message");
-  const [campaigns, setCampaigns] = useState(donationCampaigns);
+  const [campaigns, setCampaigns] = useState([]);
   const siteSettings = useSiteSettings();
   const [formData, setFormData] = useState({
     name: "",
@@ -54,7 +54,7 @@ function Chat() {
   useEffect(() => {
     apiGet("/donation-campaigns")
       .then((response) => {
-        const nextCampaigns = response.data || donationCampaigns;
+        const nextCampaigns = response.data || [];
         setCampaigns(nextCampaigns);
       })
       .catch((error) => {
