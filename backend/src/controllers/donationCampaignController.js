@@ -1,8 +1,5 @@
 import DonationCampaign from "../models/DonationCampaign.js";
 
-// Removed automatic seeding of default campaigns to avoid re-creating
-// hard-coded donation purposes. Campaigns should be managed via the
-// admin UI or directly in the database.
 
 export async function getDonationCampaigns(req, res) {
   try {
