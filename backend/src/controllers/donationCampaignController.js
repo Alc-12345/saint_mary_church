@@ -1,55 +1,11 @@
 import DonationCampaign from "../models/DonationCampaign.js";
 
-const defaultCampaigns = [
-  {
-    purpose: "General Donation",
-    title: "General Care Fund",
-    description:
-      "Daily church care, utilities, congregation support, and essential ministry needs.",
-    targetAmount: 300000,
-    accentColor: "#c89b5a",
-  },
-  {
-    purpose: "Restoration Work",
-    title: "Restoration Work",
-    description:
-      "Structural repair, roof recovery, woodwork renewal, and heritage restoration after the fire.",
-    targetAmount: 500000,
-    accentColor: "#d8b26e",
-  },
-  {
-    purpose: "Emergency Support",
-    title: "Emergency Support",
-    description:
-      "Urgent safety fixes, temporary protection, electrical work, and immediate response expenses.",
-    targetAmount: 200000,
-    accentColor: "#b77a52",
-  },
-  {
-    purpose: "Prayer Offering",
-    title: "Prayer Offering",
-    description:
-      "Special offerings for prayer services, memorial gatherings, and faith-centered community care.",
-    targetAmount: 150000,
-    accentColor: "#9f7d49",
-  },
-];
-
-async function ensureDefaultCampaigns() {
-  await Promise.all(
-    defaultCampaigns.map((campaign) =>
-      DonationCampaign.findOneAndUpdate(
-        { purpose: campaign.purpose },
-        { $setOnInsert: campaign },
-        { upsert: true, new: true }
-      )
-    )
-  );
-}
+// Removed automatic seeding of default campaigns to avoid re-creating
+// hard-coded donation purposes. Campaigns should be managed via the
+// admin UI or directly in the database.
 
 export async function getDonationCampaigns(req, res) {
   try {
-    await ensureDefaultCampaigns();
     const campaigns = await DonationCampaign.find().sort({ createdAt: 1 });
 
     res.status(200).json({

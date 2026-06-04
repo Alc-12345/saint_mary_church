@@ -3,7 +3,6 @@ import qrImage from "../assets/scanner.avif";
 import churchHome from "../assets/church-home.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { buildFundingCampaigns, } from "../data/donationCampaigns";
 import { apiGet, apiPost } from "../lib/api";
 import {
   isValidEmailAddress,
@@ -16,7 +15,7 @@ const initialForm = {
   email: "",
   phone: "",
   amount: "",
-  purpose: "General Donation",
+  purpose: "",
 };
 
 function DonateDetails() {

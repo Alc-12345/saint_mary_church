@@ -90,7 +90,7 @@ function AdminDashboard() {
     email: "",
     phone: "",
     amount: "",
-    purpose: "General Donation",
+    purpose: "",
     mode: "UPI",
   });
   const [galleryForm, setGalleryForm] = useState({
@@ -117,7 +117,7 @@ function AdminDashboard() {
   const [documentError, setDocumentError] = useState("");
   const [campaignForm, setCampaignForm] = useState({
     id: "",
-    purpose: "General Donation",
+    purpose: "",
     title: "",
     description: "",
     targetAmount: "",
