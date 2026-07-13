@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import churchHome from "../assets/church-home.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { buildFundingCampaigns,} from "../data/donationCampaigns";
 import useSiteSettings from "../hooks/useSiteSettings";
 import { apiGet, apiPost } from "../lib/api";
 import { getWhatsAppNumber } from "../lib/siteSettings";
