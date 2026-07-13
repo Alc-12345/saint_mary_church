@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 export const donationCampaigns = [];
+=======
+>>>>>>> 419061ed0731a51bc93c356e67cf11f00def14b4
 
 export function buildFundingCampaigns(campaigns = [], donations = []) {
   const verifiedTotals = donations
