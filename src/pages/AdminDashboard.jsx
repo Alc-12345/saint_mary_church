@@ -9,6 +9,7 @@ import {
   isValidPhoneNumber,
   sanitizePhoneInput,
 } from "../lib/validation";
+import DonorList from "./DonorList";
 
 const navItems = [
   "Overview",
@@ -78,13 +79,15 @@ function AdminDashboard() {
   const [documents, setDocuments] = useState(initialDocuments);
   const [campaigns, setCampaigns] = useState([]);
   const [siteSettings, setSiteSettings] = useState(defaultSiteSettings);
-  const [siteSettingsDraft, setSiteSettingsDraft] = useState(defaultSiteSettings);
-  
+  const [siteSettingsDraft, setSiteSettingsDraft] =
+    useState(defaultSiteSettings);
+
   const [isEditingSettings, setIsEditingSettings] = useState(false);
   const [settingsError, setSettingsError] = useState("");
   const [donationError, setDonationError] = useState("");
   const [selectedDonationId, setSelectedDonationId] = useState("");
   const [simpleInput, setSimpleInput] = useState("");
+  const [activePage, setActivePage] = useState("dashboard");
   const [donationForm, setDonationForm] = useState({
     donor: "",
     email: "",
@@ -185,7 +188,10 @@ function AdminDashboard() {
           purpose: nextCampaigns[0]?.purpose || current.purpose,
         }));
       } else {
-        console.error("Unable to load donation campaigns:", campaignsResult.reason);
+        console.error(
+          "Unable to load donation campaigns:",
+          campaignsResult.reason,
+        );
       }
 
       if (galleryResult.status === "fulfilled") {
@@ -197,13 +203,19 @@ function AdminDashboard() {
       if (restorationResult.status === "fulfilled") {
         setUpdates(sortByCreatedAtDesc(restorationResult.value.data || []));
       } else {
-        console.error("Unable to load restoration updates:", restorationResult.reason);
+        console.error(
+          "Unable to load restoration updates:",
+          restorationResult.reason,
+        );
       }
 
       if (documentsResult.status === "fulfilled") {
         setDocuments(documentsResult.value.data || []);
       } else {
-        console.error("Unable to load document records:", documentsResult.reason);
+        console.error(
+          "Unable to load document records:",
+          documentsResult.reason,
+        );
       }
 
       if (settingsResult.status === "fulfilled") {
@@ -319,10 +331,24 @@ function AdminDashboard() {
     reader.readAsDataURL(file);
   }
 
-  function handleCampaignChange(event) {
-    const { name, value } = event.target;
-    setCampaignForm((current) => ({ ...current, [name]: value }));
-  }
+  const handleCampaignChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "targetAmount") {
+      // Sirf digits state me store karo
+      const numericValue = value.replace(/\D/g, "");
+
+      setCampaignForm((prev) => ({
+        ...prev,
+        targetAmount: numericValue,
+      }));
+    } else {
+      setCampaignForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
 
   function editCampaign(campaign) {
     setCampaignForm({
@@ -406,7 +432,9 @@ function AdminDashboard() {
         event.target.value = "";
       })
       .catch(() => {
-        setRestorationError("Unable to read selected images. Please try again.");
+        setRestorationError(
+          "Unable to read selected images. Please try again.",
+        );
       });
   }
 
@@ -435,7 +463,10 @@ function AdminDashboard() {
         email: donationForm.email?.trim() || undefined,
         phone: donationForm.phone || undefined,
         amount: Number(donationForm.amount),
-        purpose: donationForm.purpose || (campaigns[0] && campaigns[0].purpose) || "General Donation",
+        purpose:
+          donationForm.purpose ||
+          (campaigns[0] && campaigns[0].purpose) ||
+          "General Donation",
         mode: donationForm.mode || "UPI",
       };
 
@@ -452,7 +483,9 @@ function AdminDashboard() {
       });
       setDonationError("");
     } catch (error) {
-      setDonationError("Unable to create donation right now. Please try again.");
+      setDonationError(
+        "Unable to create donation right now. Please try again.",
+      );
       console.error("Unable to create donation:", error);
     }
   }
@@ -548,7 +581,9 @@ function AdminDashboard() {
       });
       setGalleryError("");
     } catch (error) {
-      setGalleryError("Unable to save gallery item. Please try a smaller image.");
+      setGalleryError(
+        "Unable to save gallery item. Please try a smaller image.",
+      );
       console.error("Unable to create gallery item:", error);
     }
   }
@@ -627,7 +662,9 @@ function AdminDashboard() {
 
     try {
       await apiDelete(`/documents/${documentId}`);
-      setDocuments((current) => current.filter((item) => item._id !== documentId));
+      setDocuments((current) =>
+        current.filter((item) => item._id !== documentId),
+      );
     } catch (error) {
       console.error("Unable to delete document:", error);
     }
@@ -745,256 +782,274 @@ function AdminDashboard() {
       <>
         <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
           {shell(
-          "Add Donation",
-          "Create donor record",
-          <div className="grid gap-4">
-            <input
-              type="text"
-              name="donor"
-              value={donationForm.donor}
-              onChange={handleDonationChange}
-              placeholder="Donor name"
-              className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
-            />
-
-            <input
-              type="email"
-              name="email"
-              value={donationForm.email}
-              onChange={handleDonationChange}
-              autoComplete="email"
-              placeholder="Donor Email"
-              className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
-            />
-
-            <input
-              type="tel"
-              name="phone"
-              value={donationForm.phone}
-              onChange={handleDonationChange}
-              inputMode="numeric"
-              maxLength={10}
-              placeholder="Phone Number"
-              className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
-            />
-
-            <div className="relative">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base text-white/55">
-                ₹
-              </span>
+            "Add Donation",
+            "Create Donor Record",
+            <div className="grid gap-4">
               <input
-                type="number"
-                name="amount"
-                value={donationForm.amount}
+                type="text"
+                name="donor"
+                value={donationForm.donor}
                 onChange={handleDonationChange}
-                placeholder="Amount"
-                className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] py-4 pl-9 pr-4 text-white outline-none placeholder:text-white/35"
+                placeholder="Donor name"
+                className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
               />
-            </div>
 
-            {/* 🔥 NEW: Purpose Select */}
-            <select
-              name="purpose"
-              value={donationForm.purpose}
-              onChange={handleDonationChange}
-              className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none"
-            >
-              {campaigns.map((campaign) => (
-                <option
-                  key={campaign._id || campaign.id || campaign.purpose}
-                  className="text-black"
-                  value={campaign.purpose}
-                >
-                  {campaign.purpose}
+              <input
+                type="email"
+                name="email"
+                value={donationForm.email}
+                onChange={handleDonationChange}
+                autoComplete="email"
+                placeholder="Donor Email"
+                className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
+              />
+
+              <input
+                type="tel"
+                name="phone"
+                value={donationForm.phone}
+                onChange={handleDonationChange}
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="Phone Number"
+                className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
+              />
+
+              <div className="relative">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base text-white/55">
+                  ₹
+                </span>
+                <input
+                  type="text"
+                  name="amount"
+                  value={donationForm.amount}
+                  onChange={handleDonationChange}
+                  placeholder="Amount"
+                  className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] py-4 pl-9 pr-4 text-white outline-none placeholder:text-white/35"
+                />
+              </div>
+
+              {/* 🔥 NEW: Purpose Select */}
+              <select
+                name="purpose"
+                value={donationForm.purpose}
+                onChange={handleDonationChange}
+                className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none"
+              >
+                {campaigns.map((campaign) => (
+                  <option
+                    key={campaign._id || campaign.id || campaign.purpose}
+                    className="text-black"
+                    value={campaign.purpose}
+                  >
+                    {campaign.purpose}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                name="mode"
+                value={donationForm.mode}
+                onChange={handleDonationChange}
+                className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none"
+              >
+                <option className="text-black" value="Cash">
+                  Cash
                 </option>
-              ))}
-            </select>
+              </select>
 
-            <select
-              name="mode"
-              value={donationForm.mode}
-              onChange={handleDonationChange}
-              className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none"
-            >
-              <option className="text-black" value="Cash">
-                Cash
-              </option>
-            </select>
+              <button
+                type="button"
+                onClick={addDonation}
+                className="inline-flex rounded-full border border-[#d1b06d] bg-[#d1b06d] px-6 py-3 font-sans text-xs font-semibold uppercase tracking-[0.24em] text-[#24170d]"
+              >
+                Save Donation
+              </button>
 
-            <button
-              type="button"
-              onClick={addDonation}
-              className="inline-flex rounded-full border border-[#d1b06d] bg-[#d1b06d] px-6 py-3 font-sans text-xs font-semibold uppercase tracking-[0.24em] text-[#24170d]"
-            >
-              Save Donation
-            </button>
-            {donationError && (
-              <p className="text-sm text-[#f0b7b7]">{donationError}</p>
-            )}
-          </div>,
+              {donationError && (
+                <p className="text-sm text-[#f0b7b7]">{donationError}</p>
+              )}
+            </div>,
           )}
 
           {shell(
-          "Donor Records",
-          "Verify payment status",
-          <div>
-            <div className="max-h-[31rem] space-y-3 overflow-y-auto pr-2">
-            {donations.map((item, index) => (
-              <div
-                key={item._id || `${item.donor}-${index}`}
-                onClick={() =>
-                  setSelectedDonationId((current) =>
-                    current === getDonationKey(item) ? "" : getDonationKey(item),
-                  )
-                }
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setSelectedDonationId((current) =>
-                      current === getDonationKey(item) ? "" : getDonationKey(item),
-                    );
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-expanded={getDonationKey(item) === selectedDonationId}
-                className={`w-full overflow-hidden rounded-[22px] border px-4 py-4 text-left transition ${
-                  getDonationKey(item) === selectedDonationId
-                    ? "border-[#d1b06d]/60 bg-[rgba(209,176,109,0.12)] shadow-[0_16px_50px_rgba(0,0,0,0.18)]"
-                    : "border-white/10 bg-[rgba(255,255,255,0.03)]"
-                }`}
-              >
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="font-serif text-[1.35rem] text-white">
-                      {item.donor}
-                    </p>
-                    <p className="mt-1 text-sm text-white/65">
-                      {formatCurrency(item.amount)} • {item.mode} 
-                    </p>
-                    {/* 🔥 Purpose badge */}
-                    <p className="mt-1 inline-block rounded-full bg-[#d1b06d]/20 px-3 py-1 text-xs text-[#ead7a3]">
-                      {item.purpose || "General Donation"}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full border border-white/10 px-3 py-2 text-xs uppercase tracking-[0.2em] text-[#ead7a3]">
-                      {item.status}
-                    </span>
-                    {item.status !== "Verified" && (
-                      <button
-                        type="button"
-                        onClick={async (event) => {
-                          event.stopPropagation();
-                          if (!item._id) return;
+            "Donor Records",
+            "Verify Payment Status",
 
-                          try {
-                            const response = await apiPatch(
-                              `/donations/${item._id}/verify`,
-                            );
-
-                            setDonations((current) =>
-                              current.map((donation, donationIndex) =>
-                                donationIndex === index
-                                  ? response.data
-                                  : donation,
-                              ),
-                            );
-                          } catch (error) {
-                            console.error("Unable to verify donation:", error);
-                          }
-                        }}
-                        className="rounded-full border border-white/10 bg-[rgba(255,255,255,0.06)] px-4 py-2 font-sans text-xs uppercase tracking-[0.2em] text-white/85"
-                        >
-                          Mark Verified
-                        </button>
-                      )}
-                    <span className="rounded-full border border-[#d1b06d]/20 px-3 py-2 text-[0.65rem] uppercase tracking-[0.22em] text-white/70">
-                      {getDonationKey(item) === selectedDonationId
-                        ? "Hide Details"
-                        : "View Details"}
-                    </span>
-                  </div>
-                </div>
-
-                {getDonationKey(item) === selectedDonationId && (
-                  <div className="mt-4 border-t border-white/10 pt-4">
-                    <div className="space-y-5 rounded-[20px] bg-[rgba(255,255,255,0.03)] px-4 py-4">
-                      <div className="border-b border-white/10 pb-4">
-                        <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#ead7a3]">
-                          Donor Details
-                        </p>
-                        <h4 className="mt-3 font-serif text-[1.7rem] text-white">
+            <div>
+              <div className="mb-5 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => setActiveView("All Donors")}
+                  className="rounded-full border border-[#d1b06d] bg-[#d1b06d] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#24170d]"
+                >
+                  All Donors
+                </button>
+              </div>
+              <div className="max-h-[31rem] space-y-3 overflow-y-auto pr-2">
+                {donations.map((item, index) => (
+                  <div
+                    key={item._id || `${item.donor}-${index}`}
+                    onClick={() =>
+                      setSelectedDonationId((current) =>
+                        current === getDonationKey(item)
+                          ? ""
+                          : getDonationKey(item),
+                      )
+                    }
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedDonationId((current) =>
+                          current === getDonationKey(item)
+                            ? ""
+                            : getDonationKey(item),
+                        );
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={getDonationKey(item) === selectedDonationId}
+                    className={`w-full overflow-hidden rounded-[22px] border px-4 py-4 text-left transition ${
+                      getDonationKey(item) === selectedDonationId
+                        ? "border-[#d1b06d]/60 bg-[rgba(209,176,109,0.12)] shadow-[0_16px_50px_rgba(0,0,0,0.18)]"
+                        : "border-white/10 bg-[rgba(255,255,255,0.03)]"
+                    }`}
+                  >
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <div>
+                        <p className="font-serif text-[1.35rem] text-white">
                           {item.donor}
-                        </h4>
-                        <p className="mt-2 text-sm leading-[1.8] text-white/68">
-                          {formatCurrency(item.amount)} • {item.mode} •{" "}
+                        </p>
+                        <p className="mt-1 text-sm text-white/65">
+                          {formatCurrency(item.amount)} • {item.mode}
+                        </p>
+                        {/* 🔥 Purpose badge */}
+                        <p className="mt-1 inline-block rounded-full bg-[#d1b06d]/20 px-3 py-1 text-xs text-[#ead7a3]">
                           {item.purpose || "General Donation"}
                         </p>
                       </div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="rounded-full border border-white/10 px-3 py-2 text-xs uppercase tracking-[0.2em] text-[#ead7a3]">
+                          {item.status}
+                        </span>
+                        {item.status !== "Verified" && (
+                          <button
+                            type="button"
+                            onClick={async (event) => {
+                              event.stopPropagation();
+                              if (!item._id) return;
 
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
-                          <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
-                            Email
-                          </p>
-                          <p className="mt-2 break-words text-sm text-white/82">
-                            {item.email || "Not provided"}
-                          </p>
-                        </div>
-                        <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
-                          <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
-                            Phone
-                          </p>
-                          <p className="mt-2 text-sm text-white/82">
-                            {item.phone || "Not provided"}
-                          </p>
-                        </div>
-                        <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
-                          <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
-                            Status
-                          </p>
-                          <p className="mt-2 text-sm text-white/82">
-                            {item.status || "Pending Receipt"}
-                          </p>
-                        </div>
-                        <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
-                          <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
-                            Received On
-                          </p>
-                          <p className="mt-2 text-sm text-white/82">
-                            {formatDateTime(item.createdAt)}
-                          </p>
-                        </div>
-                      </div>
+                              try {
+                                const response = await apiPatch(
+                                  `/donations/${item._id}/verify`,
+                                );
 
-                      <div className="rounded-[20px] border border-[#d1b06d]/20 bg-[rgba(209,176,109,0.08)] px-4 py-4">
-                        <p className="text-[0.72rem] uppercase tracking-[0.22em] text-[#ead7a3]">
-                          Payment Summary
-                        </p>
-                        <p className="mt-3 text-sm leading-[1.9] text-white/82">
-                          Donation by{" "}
-                          <span className="font-semibold text-white">
-                            {item.donor}
-                          </span>{" "}
-                          for{" "}
-                          <span className="font-semibold text-white">
-                            {item.purpose || "General Donation"}
-                          </span>{" "}
-                          via{" "}
-                          <span className="font-semibold text-white">
-                            {item.mode}
-                          </span>
-                          .
-                        </p>
+                                setDonations((current) =>
+                                  current.map((donation, donationIndex) =>
+                                    donationIndex === index
+                                      ? response.data
+                                      : donation,
+                                  ),
+                                );
+                              } catch (error) {
+                                console.error(
+                                  "Unable to verify donation:",
+                                  error,
+                                );
+                              }
+                            }}
+                            className="rounded-full border border-white/10 bg-[rgba(255,255,255,0.06)] px-4 py-2 font-sans text-xs uppercase tracking-[0.2em] text-white/85"
+                          >
+                            Mark Verified
+                          </button>
+                        )}
+                        <span className="rounded-full border border-[#d1b06d]/20 px-3 py-2 text-[0.65rem] uppercase tracking-[0.22em] text-white/70">
+                          {getDonationKey(item) === selectedDonationId
+                            ? "Hide Details"
+                            : "View Details"}
+                        </span>
                       </div>
                     </div>
+
+                    {getDonationKey(item) === selectedDonationId && (
+                      <div className="mt-4 border-t border-white/10 pt-4">
+                        <div className="space-y-5 rounded-[20px] bg-[rgba(255,255,255,0.03)] px-4 py-4">
+                          <div className="border-b border-white/10 pb-4">
+                            <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#ead7a3]">
+                              Donor Details
+                            </p>
+                            <h4 className="mt-3 font-serif text-[1.7rem] text-white">
+                              {item.donor}
+                            </h4>
+                            <p className="mt-2 text-sm leading-[1.8] text-white/68">
+                              {formatCurrency(item.amount)} • {item.mode} •{" "}
+                              {item.purpose || "General Donation"}
+                            </p>
+                          </div>
+
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
+                              <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
+                                Email
+                              </p>
+                              <p className="mt-2 break-words text-sm text-white/82">
+                                {item.email || "Not provided"}
+                              </p>
+                            </div>
+                            <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
+                              <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
+                                Phone
+                              </p>
+                              <p className="mt-2 text-sm text-white/82">
+                                {item.phone || "Not provided"}
+                              </p>
+                            </div>
+                            <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
+                              <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
+                                Status
+                              </p>
+                              <p className="mt-2 text-sm text-white/82">
+                                {item.status || "Pending Receipt"}
+                              </p>
+                            </div>
+                            <div className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.03)] px-4 py-4">
+                              <p className="text-[0.7rem] uppercase tracking-[0.22em] text-[#ead7a3]">
+                                Received On
+                              </p>
+                              <p className="mt-2 text-sm text-white/82">
+                                {formatDateTime(item.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="rounded-[20px] border border-[#d1b06d]/20 bg-[rgba(209,176,109,0.08)] px-4 py-4">
+                            <p className="text-[0.72rem] uppercase tracking-[0.22em] text-[#ead7a3]">
+                              Payment Summary
+                            </p>
+                            <p className="mt-3 text-sm leading-[1.9] text-white/82">
+                              Donation by{" "}
+                              <span className="font-semibold text-white">
+                                {item.donor}
+                              </span>{" "}
+                              for{" "}
+                              <span className="font-semibold text-white">
+                                {item.purpose || "General Donation"}
+                              </span>{" "}
+                              via{" "}
+                              <span className="font-semibold text-white">
+                                {item.mode}
+                              </span>
+                              .
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
-            </div>
-          </div>
+            </div>,
           )}
         </div>
 
@@ -1028,12 +1083,17 @@ function AdminDashboard() {
                 className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
               />
               <div className="relative">
-          
                 <input
-                  type="number"
+                  type="text"
                   min="1"
                   name="targetAmount"
-                  value={campaignForm.targetAmount}
+                  value={
+                    campaignForm.targetAmount
+                      ? Number(campaignForm.targetAmount).toLocaleString(
+                          "en-IN",
+                        )
+                      : ""
+                  }
                   onChange={handleCampaignChange}
                   placeholder="Target amount"
                   className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 pl-10 text-white outline-none placeholder:text-white/35"
@@ -1063,8 +1123,10 @@ function AdminDashboard() {
                         {campaign.title}
                       </p>
                       <p className="mt-1 text-sm text-white/65">
-                        {campaign.purpose} • Target ₹{Number(campaign.targetAmount || 0).toLocaleString("en-IN")}
-              
+                        {campaign.purpose} • Target ₹
+                        {Number(campaign.targetAmount || 0).toLocaleString(
+                          "en-IN",
+                        )}
                       </p>
                       <p className="mt-2 text-sm leading-[1.7] text-white/70">
                         {campaign.description}
@@ -1091,6 +1153,38 @@ function AdminDashboard() {
           </div>,
         )}
       </>
+    );
+  }
+
+  function renderDonorList() {
+    return (
+      <div>
+  {/* Top Buttons */}
+  <div className="mb-6 flex items-center justify-between">
+
+    <button
+      onClick={() => setActiveView("Donations")}
+      className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm text-white transition hover:bg-white/10"
+    >
+      ← Back
+    </button>
+
+    <button
+      onClick={() => setActiveView("Donations")}
+      className="flex h-12 w-12 items-center justify-center rounded-full bg-[#d1b06d] text-4xl font-bold text-[#24170d] shadow-lg transition hover:scale-110"
+    >
+      +
+    </button>
+
+  </div>
+
+  {shell(
+    "All Donors",
+    "Manage all donor records",
+
+    <DonorList />
+  )}
+</div>
     );
   }
 
@@ -1232,8 +1326,6 @@ function AdminDashboard() {
             )}
           </div>,
         )}
-
-      
       </div>
     );
   }
@@ -1439,11 +1531,12 @@ function AdminDashboard() {
                     <p className="font-serif text-[1.35rem] text-white">
                       {item.title}
                     </p>
-                    <p className="mt-1 text-sm text-white/65">
-                      {item.type}
-                    </p>
+                    <p className="mt-1 text-sm text-white/65">{item.type}</p>
                     <p className="mt-1 text-xs uppercase tracking-[0.18em] text-[#ead7a3]/85">
-                      Published {formatDateTime(item.publishedAt || item.updatedAt || item.createdAt)}
+                      Published{" "}
+                      {formatDateTime(
+                        item.publishedAt || item.updatedAt || item.createdAt,
+                      )}
                     </p>
                     {item.description && (
                       <p className="mt-3 max-w-2xl text-sm leading-[1.8] text-white/70">
@@ -1502,8 +1595,8 @@ function AdminDashboard() {
                 className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-sm text-white outline-none file:mr-4 file:rounded-full file:border-0 file:bg-[#d1b06d] file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.18em] file:text-[#24170d]"
               />
               <p className="text-sm text-white/65">
-                You can select multiple photos together, or choose more photos again
-                to keep adding them before publishing.
+                You can select multiple photos together, or choose more photos
+                again to keep adding them before publishing.
               </p>
               {restorationForm.imageUrls.length > 0 && (
                 <div className="space-y-3">
@@ -1551,16 +1644,17 @@ function AdminDashboard() {
               >
                 {(item.imageUrls?.length > 0 || item.imageUrl) && (
                   <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                    {(item.imageUrls?.length > 0 ? item.imageUrls : [item.imageUrl]).map(
-                      (imageUrl, imageIndex) => (
-                        <img
-                          key={`${item._id || item.title}-${imageIndex}`}
-                          src={imageUrl}
-                          alt={`${item.title} ${imageIndex + 1}`}
-                          className="h-40 w-full rounded-[18px] object-cover"
-                        />
-                      ),
-                    )}
+                    {(item.imageUrls?.length > 0
+                      ? item.imageUrls
+                      : [item.imageUrl]
+                    ).map((imageUrl, imageIndex) => (
+                      <img
+                        key={`${item._id || item.title}-${imageIndex}`}
+                        src={imageUrl}
+                        alt={`${item.title} ${imageIndex + 1}`}
+                        className="h-40 w-full rounded-[18px] object-cover"
+                      />
+                    ))}
                   </div>
                 )}
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -1597,7 +1691,9 @@ function AdminDashboard() {
                             setUpdates((current) =>
                               sortByCreatedAtDesc(
                                 current.map((update, updateIndex) =>
-                                  updateIndex === index ? response.data : update,
+                                  updateIndex === index
+                                    ? response.data
+                                    : update,
                                 ),
                               ),
                             );
@@ -1630,6 +1726,7 @@ function AdminDashboard() {
   function renderContent() {
     if (activeView === "Overview") return renderOverview();
     if (activeView === "Donations") return renderDonations();
+    if (activeView === "All Donors") return renderDonorList();
     if (activeView === "Gallery") return renderGallery();
     if (activeView === "Restoration") return renderRestoration();
     if (activeView === "Documents") return renderDocuments();

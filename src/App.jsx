@@ -16,6 +16,7 @@ import Restoration from "./pages/Restoration";
 import RestorationPhoto from "./pages/RestorationPhoto";
 import Documents from "./pages/Documents";
 import History from "./pages/History";
+import DonorList from "./pages/DonorList";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
           <Route path="/chat" element={<Chat />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route
@@ -49,8 +51,12 @@ function App() {
           <Route path="/documents" element={<Documents />} />
           <Route path="/documents/:documentIndex" element={<DocumentViewer />} />
           <Route path="/history" element={<History />} />
+          
         </Routes>
         <FloatingChatButton />
+        <Routes>
+          <Route path="/donor-list" element={<DonorList />} />
+        </Routes>
       </>
     </BrowserRouter>
   );

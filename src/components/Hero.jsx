@@ -13,6 +13,44 @@ import Navbar from "./Navbar";
 function formatAmount(amount) {
   return new Intl.NumberFormat("en-IN").format(amount);
 }
+const featuredDonors = [
+  {
+    id: 1,
+    donor: "Sonal Bairwa",
+    purpose: "Church Restoration",
+    amount: 25000,
+  },
+  {
+    id: 2,
+    donor: "Rahul Sharma",
+    purpose: "Roof Repair",
+    amount: 10000,
+  },
+  {
+    id: 3,
+    donor: "Anjali Gupta",
+    purpose: "Children Education",
+    amount: 150000,
+  },
+  {
+    id: 4,
+    donor: "Vikas Meena",
+    purpose: "Medical Help",
+    amount: 75000,
+  },
+  {
+    id: 5,
+    donor: "Priya Jain",
+    purpose: "Church Restoration",
+    amount: 5000,
+  },
+  {
+    id: 6,
+    donor: "Rakesh Kumar",
+    purpose: "Roof Repair",
+    amount: 120000,
+  },
+];
 
 function FundingCard({ campaign }) {
   const progress = Math.min(
@@ -266,8 +304,102 @@ function Hero() {
                 <FundingCard key={campaign.id} campaign={campaign} />
               ))}
             </div>
+            
           </div>
+          <div className="mt-14 mr-12 ml-12 rounded-[32px] border border-[rgba(183,150,79,0.16)] bg-[linear-gradient(180deg,rgba(255,252,247,0.96),rgba(250,242,231,0.92))] px-10 py-14 shadow-[0_20px_60px_rgba(83,61,28,0.08)]">
+
+  <div className="text-center">
+
+    <p className="text-sm uppercase tracking-[0.32em] text-[#a48340]">
+      Blessed Contributors
+    </p>
+
+    <h2 className="mt-4 text-4xl md:text-5xl text-[#533c20]">
+      Our Generous Donors
+    </h2>
+
+    <p className="mt-5 max-w-3xl mx-auto text-lg leading-8 text-[#6b5a44]">
+      We are deeply grateful to everyone who has contributed towards the
+      restoration and mission of Saint Mary's Church. Every donation
+      strengthens our community and preserves our heritage.
+    </p>
+
+  </div>
+
+  <div className="mt-10 h-[380px] overflow-y-auto pr-3">
+   <div className="grid gap-6 lg:grid-cols-2">
+
+    {featuredDonors.map((donor) => (
+
+      <div
+        key={donor.id}
+        className="rounded-[22px] border border-[#d8c29a] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+      >
+
+        <div className="flex items-center justify-between">
+
+          <div className="flex items-center gap-4">
+
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#d1b06d] text-2xl font-bold text-[#24170d]">
+              {donor.donor.charAt(0)}
+            </div>
+
+            <div>
+
+              <h3 className="text-2xl font-semibold text-[#3d2a16]">
+                {donor.donor}
+              </h3>
+
+              <p className="mt-1 text-[#8a6d3f]">
+                {donor.purpose}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="rounded-full bg-[#d1b06d]/15 border border-[#d1b06d]/30 px-5 py-3">
+
+            <p className="text-sm uppercase tracking-widest text-[#8a6d3f]">
+              Donated
+            </p>
+
+            <h4 className="mt-1 text-lg font-bold text-[#3d2a16]">
+              ₹{Number(donor.amount).toLocaleString("en-IN")}
+            </h4>
+
+          </div>
+
         </div>
+
+        <div className="mt-6 border-t border-[#ead7a3] pt-5">
+
+          <p className="leading-8 text-[#6b5a44]">
+            Thank you,
+            <span className="font-semibold text-[#3d2a16]">
+              {" "}{donor.donor}
+            </span>
+            , for supporting our
+            <span className="font-semibold text-[#3d2a16]">
+              {" "}{donor.purpose}
+            </span>
+           .
+          </p>
+
+        </div>
+
+      </div>
+
+    ))}
+    </div>
+
+  </div>
+
+  </div>
+        </div>
+        
+
+
 
         <div className="px-4 pb-0 pt-8 sm:px-6 md:px-8 md:pt-10">
           <div className="mx-auto max-w-[1320px] overflow-hidden rounded-[30px] border border-[rgba(183,150,79,0.14)] bg-[rgba(252,252,252,0.97)] shadow-[0_24px_70px_rgba(83,61,28,0.1)]">
