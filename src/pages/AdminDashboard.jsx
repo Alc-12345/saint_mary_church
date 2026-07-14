@@ -1038,7 +1038,7 @@ function AdminDashboard() {
                   placeholder="Target amount"
                   className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 pl-10 text-white outline-none placeholder:text-white/35"
                 />
-                <span className="pointer-events-none absolute left-4 top-1/4 z-10 -translate-y-1/2 text-base leading-none text-white/55">
+                <span className="pointer-events-none absolute left-4 top-1/4 z-10 -translate-y-1/2 text-base leading-none text-white/55 pt-6">
                   ₹
                 </span>
               </div>
@@ -1063,7 +1063,7 @@ function AdminDashboard() {
                         {campaign.title}
                       </p>
                       <p className="mt-1 text-sm text-white/65">
-                        {campaign.purpose} • Target {formatCurrency(Number(campaign.targetAmount || 0))}
+                        {campaign.purpose} • Target ₹{Number(campaign.targetAmount || 0).toLocaleString("en-IN")}
               
                       </p>
                       <p className="mt-2 text-sm leading-[1.7] text-white/70">
