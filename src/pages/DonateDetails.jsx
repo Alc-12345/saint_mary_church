@@ -9,6 +9,7 @@ import {
   isValidPhoneNumber,
   sanitizePhoneInput,
 } from "../lib/validation";
+import { toTitleCase } from "../lib/textFormat";
 
 const initialForm = {
   fullName: "",
@@ -79,11 +80,11 @@ function DonateDetails() {
       setSubmitError("");
 
       await apiPost("/donations", {
-        donor: formData.fullName.trim(),
+        donor: toTitleCase(formData.fullName),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         amount: Number(formData.amount),
-        purpose: formData.purpose,
+        purpose: toTitleCase(formData.purpose),
         mode: "QR Payment",
         status: "Pending Receipt",
       });
@@ -259,7 +260,7 @@ function DonateDetails() {
                       Donor Confirmed
                     </p>
                     <p className="mt-3 text-[1.02rem] leading-[1.8] text-white/86">
-                      Thank you, {formData.fullName}. You can now scan the QR
+                      Thank you, {toTitleCase(formData.fullName)}. You can now scan the QR
                       code below and complete your donation of ₹{formData.amount}.
                     </p>
                     <p className="mt-3 text-sm leading-[1.8] text-white/72">

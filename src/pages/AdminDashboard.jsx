@@ -4,6 +4,7 @@ import churchHome from "../assets/church-home.avif";
 import { clearAdminToken } from "../lib/adminAuth";
 import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from "../lib/api";
 import { defaultSiteSettings, mergeSiteSettings } from "../lib/siteSettings";
+
 import {
   isValidEmailAddress,
   isValidPhoneNumber,
@@ -246,6 +247,7 @@ function AdminDashboard() {
       </div>
     );
   }
+  
 
   function shell(eyebrow, title, content, action) {
     return (
@@ -263,6 +265,7 @@ function AdminDashboard() {
       </div>
     );
   }
+  
 
   function handleDonationChange(event) {
     const { name, value } = event.target;
@@ -271,6 +274,8 @@ function AdminDashboard() {
       [name]: name === "phone" ? sanitizePhoneInput(value) : value,
     }));
     setDonationError("");
+
+
   }
 
   function handleGalleryChange(event) {
@@ -330,6 +335,7 @@ function AdminDashboard() {
     };
     reader.readAsDataURL(file);
   }
+  
 
   const handleCampaignChange = (e) => {
     const { name, value } = e.target;

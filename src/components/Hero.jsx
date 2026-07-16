@@ -13,44 +13,7 @@ import Navbar from "./Navbar";
 function formatAmount(amount) {
   return new Intl.NumberFormat("en-IN").format(amount);
 }
-const featuredDonors = [
-  {
-    id: 1,
-    donor: "Sonal Bairwa",
-    purpose: "Church Restoration",
-    amount: 25000,
-  },
-  {
-    id: 2,
-    donor: "Rahul Sharma",
-    purpose: "Roof Repair",
-    amount: 10000,
-  },
-  {
-    id: 3,
-    donor: "Anjali Gupta",
-    purpose: "Children Education",
-    amount: 150000,
-  },
-  {
-    id: 4,
-    donor: "Vikas Meena",
-    purpose: "Medical Help",
-    amount: 75000,
-  },
-  {
-    id: 5,
-    donor: "Priya Jain",
-    purpose: "Church Restoration",
-    amount: 5000,
-  },
-  {
-    id: 6,
-    donor: "Rakesh Kumar",
-    purpose: "Roof Repair",
-    amount: 120000,
-  },
-];
+
 
 function FundingCard({ campaign }) {
   const progress = Math.min(
@@ -142,9 +105,24 @@ function FundingCard({ campaign }) {
 }
 
 function Hero() {
-  const [showHeroText, setShowHeroText] = useState(false);
+ const [showHeroText, setShowHeroText] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
+  const [featuredDonors, setFeaturedDonors] = useState([]);
+
   const siteSettings = useSiteSettings();
+
+  useEffect(() => {
+    loadFeaturedDonors();
+  }, []);
+
+  const loadFeaturedDonors = async () => {
+    try {
+      const res = await apiGet("/donations?visible=true");
+      setFeaturedDonors(res.data || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -332,9 +310,10 @@ function Hero() {
     {featuredDonors.map((donor) => (
 
       <div
-        key={donor.id}
+        key={donor._id}
         className="rounded-[22px] border border-[#d8c29a] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
+      
 
         <div className="flex items-center justify-between">
 

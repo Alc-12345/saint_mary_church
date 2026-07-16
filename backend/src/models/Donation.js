@@ -26,7 +26,7 @@ const donationSchema = new mongoose.Schema(
     mode: {
       type: String,
       required: true,
-      enum: ["UPI", "QR Payment", "Bank Transfer"],
+      enum: ["UPI", "QR Payment", "Bank Transfer", "Cash"],
       default: "UPI",
     },
     purpose: {
@@ -38,6 +38,34 @@ const donationSchema = new mongoose.Schema(
       type: String,
       enum: ["Verified", "Pending Receipt", "Failed"],
       default: "Pending Receipt",
+    },
+    showOnDonorList: {
+      type: Boolean,
+      default: false,
+    },
+    createdByAdminId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+      default: null,
+    },
+    createdByAdminName: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    verifiedByAdminId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+      default: null,
+    },
+    verifiedByAdminName: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    verifiedAt: {
+      type: Date,
+      default: null,
     },
   },
   {
