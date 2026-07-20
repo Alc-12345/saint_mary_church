@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { apiGet, apiPatch,apiDelete  } from "../lib/api";
+import { apiGet, apiPatch, apiDelete } from "../lib/api";
 import { getAdminToken } from "../lib/adminAuth";
 import { toTitleCase } from "../lib/textFormat";
 import { FiTrash2 } from "react-icons/fi";
@@ -28,28 +28,28 @@ export default function DonorList() {
   useEffect(() => {
     loadDonors();
   }, []);
-  
-const loadDonors = async () => {
-  try {
-    const res = await apiGet(
-  isAdminView
-    ? "/donations"
-    : "/donations?visible=true"
-);
-    setDonorData(res.data || []);
-  } catch (err) {
-    console.error(err);
-  }
-};
+
+  const loadDonors = async () => {
+    try {
+      const res = await apiGet(
+        isAdminView ? "/donations" : "/donations?visible=true",
+      );
+      setDonorData(res.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleDelete = async () => {
   if (!deleteDonor) return;
 
   try {
-    await apiDelete(`/donations/${deleteDonor._id}`);
-
     setDonorData((prev) =>
-      prev.filter((item) => item._id !== deleteDonor._id)
+      prev.map((item) =>
+        item._id === deleteDonor._id
+          ? { ...item, isDeleted: true }
+          : item
+      )
     );
 
     setDeleteDonor(null);
@@ -71,7 +71,7 @@ const loadDonors = async () => {
       const res = await apiPatch(`/donations/${donor._id}/display`, {
         showOnDonorList,
       });
-      
+
       setDonorData((current) =>
         current.map((item) => (item._id === donor._id ? res.data : item)),
       );
@@ -90,17 +90,16 @@ const loadDonors = async () => {
   const purposes = ["All", ...new Set(donorData.map((item) => item.purpose))];
 
   const filteredDonors = useMemo(() => {
-  return donorData.filter((item) => {
-    const matchesSearch = item.donor
-      .toLowerCase()
-      .includes(search.toLowerCase());
+    return donorData.filter((item) => {
+      const matchesSearch = item.donor
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
-    const matchesPurpose =
-      purpose === "All" || item.purpose === purpose;
+      const matchesPurpose = purpose === "All" || item.purpose === purpose;
 
-    return matchesSearch && matchesPurpose;
-  });
-}, [donorData, search, purpose]);
+      return matchesSearch && matchesPurpose;
+    });
+  }, [donorData, search, purpose]);
 
   const totalDonation = filteredDonors.reduce(
     (sum, item) => sum + item.amount,
@@ -357,37 +356,39 @@ const loadDonors = async () => {
                 {/* Action */}
 
                 <div className="flex items-center justify-center gap-4">
-                  <button
-                    onClick={() => setSelectedDonor(item)}
-                    className="rounded-full bg-[#d1b06d] px-4 py-2 text-[#24170d]"
-                  >
-                    View
-                  </button>
-                  {/* <button
-                    onClick={() => handleDelete(item)}
-                    className={`rounded-full px-4 py-2 text-white transition
-    ${deleteId === item._id ? "bg-red-700" : "bg-red-500 hover:bg-red-600"}`}
-                  >
-                    {deleteId === item._id ? "Confirm Delete" : "Delete"}
-                  </button> */}
-                 <button
-  onClick={() => setDeleteDonor(item)}
-  className="flex h-10 w-10 items-center justify-center rounded-full border border-red-500/30 bg-red-500/10 text-red-400 transition hover:bg-red-500/20"
->
-  <FiTrash2 size={18} />
-</button>
+  {item.isDeleted ? (
+    <span className="rounded-full bg-red-500/10 border border-red-500/30 px-4 py-2 text-sm font-semibold text-red-400">
+      Deleted
+    </span>
+  ) : (
+    <>
+      <button
+        onClick={() => setSelectedDonor(item)}
+        className="rounded-full bg-[#d1b06d] px-4 py-2 text-[#24170d]"
+      >
+        View
+      </button>
 
-                  {isAdminView && (
-                    <input
-                      type="checkbox"
-                      checked={Boolean(item.showOnDonorList)}
-                     onChange={(e) =>
-  updateDonorDisplay(item, e.target.checked)
-}
-                      className="h-5 w-5 accent-[#d1b06d]"
-                    />
-                  )}
-                </div>
+      <button
+        onClick={() => setDeleteDonor(item)}
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-red-500/30 bg-red-500/10 text-red-400 transition hover:bg-red-500/20"
+      >
+        <FiTrash2 size={18} />
+      </button>
+
+      {isAdminView && (
+        <input
+          type="checkbox"
+          checked={Boolean(item.showOnDonorList)}
+          onChange={(e) =>
+            updateDonorDisplay(item, e.target.checked)
+          }
+          className="h-5 w-5 accent-[#d1b06d]"
+        />
+      )}
+    </>
+  )}
+</div>
               </div>
 
               {/* Mobile Card */}
@@ -638,52 +639,47 @@ const loadDonors = async () => {
           </div>
         </div>
       )}
-   {deleteDonor && (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-    <div className="w-[420px] rounded-[28px] border border-white/10 bg-[#18120e] p-8 shadow-2xl">
+      {deleteDonor && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-[420px] rounded-[28px] border border-white/10 bg-[#18120e] p-8 shadow-2xl">
+            <div className="flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15">
+                <FiTrash2 className="text-3xl text-red-400" />
+              </div>
+            </div>
 
-      <div className="flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15">
-          <FiTrash2 className="text-3xl text-red-400" />
+            <h2 className="mt-6 text-center font-serif text-3xl text-white">
+              Are You Sure?
+            </h2>
+
+            <p className="mt-3 text-center leading-7 text-white/60">
+              Do you really want to delete
+              <br />
+              <span className="font-semibold text-white">
+                {deleteDonor.donor}
+              </span>
+              ?
+              <br />
+            </p>
+
+            <div className="mt-8 flex justify-center gap-4">
+              <button
+                onClick={() => setDeleteDonor(null)}
+                className="rounded-full border border-white/10 px-7 py-3 text-white transition hover:bg-white/10"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="rounded-full bg-red-600 px-8 py-3 font-semibold text-white transition hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <h2 className="mt-6 text-center font-serif text-3xl text-white">
-        Are You Sure?
-      </h2>
-
-      <p className="mt-3 text-center leading-7 text-white/60">
-        Do you really want to delete
-        <br />
-        <span className="font-semibold text-white">
-          {deleteDonor.donor}
-        </span>
-        ?
-        <br />
-       
-      </p>
-
-      <div className="mt-8 flex justify-center gap-4">
-
-        <button
-          onClick={() => setDeleteDonor(null)}
-          className="rounded-full border border-white/10 px-7 py-3 text-white transition hover:bg-white/10"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={handleDelete}
-          className="rounded-full bg-red-600 px-8 py-3 font-semibold text-white transition hover:bg-red-700"
-        >
-          Delete
-        </button>
-
-      </div>
-
-    </div>
-  </div>
-)}
+      )}
     </section>
   );
 }

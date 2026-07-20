@@ -143,24 +143,23 @@ export async function updateDonationDisplay(req, res) {
 }
 export async function deleteDonation(req, res) {
   try {
-    const donation = await Donation.findByIdAndDelete(req.params.id);
+    const donation = await Donation.findByIdAndUpdate(
+      req.params.id,
+      {
+        isDeleted: true,
+      },
+      { new: true }
+    );
 
-    if (!donation) {
-      return res.status(404).json({
-        success: false,
-        message: "Donation not found",
-      });
-    }
-
-    res.status(200).json({
+    res.json({
       success: true,
-      message: "Donation deleted successfully",
+      message: "Donation deleted.",
+      data: donation,
     });
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({
       success: false,
-      message: "Unable to delete donation",
-      error: error.message,
+      message: err.message,
     });
   }
 }
