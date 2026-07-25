@@ -267,48 +267,91 @@ function AdminDashboard() {
   }
   
 
+  // function handleDonationChange(event) {
+  //   const { name, value } = event.target;
+  //   setDonationForm((current) => ({
+  //     ...current,
+  //     [name]: name === "phone" ? sanitizePhoneInput(value) : value,
+  //   }));
+  //   setDonationError("");
+
+
+  // }
+  function capitalizeFirstLetter(value) {
+  if (!value) return value;
+
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
   function handleDonationChange(event) {
-    const { name, value } = event.target;
-    setDonationForm((current) => ({
-      ...current,
-      [name]: name === "phone" ? sanitizePhoneInput(value) : value,
-    }));
-    setDonationError("");
+  const { name, value } = event.target;
 
+  let finalValue = value;
 
+  if (name === "phone") {
+    finalValue = sanitizePhoneInput(value);
   }
 
-  function handleGalleryChange(event) {
-    const { name, value } = event.target;
-    setGalleryForm((current) => {
-      if (name === "type") {
-        return { ...current, type: value, imageUrl: "" };
-      }
+  if (["donor", "purpose"].includes(name)) {
+    finalValue = capitalizeFirstLetter(value);
+  }
 
-      return { ...current, [name]: value };
-    });
+  if (name === "amount") {
+    finalValue = value.replace(/\D/g, "");
+  }
 
+  setDonationForm((current) => ({
+    ...current,
+    [name]: finalValue,
+  }));
+
+  setDonationError("");
+}
+
+function handleGalleryChange(event) {
+  const { name, value } = event.target;
+
+  const finalValue =
+    ["title", "caption"].includes(name)
+      ? capitalizeFirstLetter(value)
+      : value;
+
+  setGalleryForm((current) => {
     if (name === "type") {
-      setGalleryError("");
+      return { ...current, type: value, imageUrl: "" };
     }
+
+    return { ...current, [name]: finalValue };
+  });
+
+  if (name === "type") {
+    setGalleryError("");
   }
+}
 
   function handleDocumentChange(event) {
-    const { name, value } = event.target;
-    setDocumentForm((current) => {
-      if (name === "type") {
-        return {
-          ...current,
-          type: value,
-          fileUrl: "",
-          content: "",
-        };
-      }
+  const { name, value } = event.target;
 
-      return { ...current, [name]: value };
-    });
-    setDocumentError("");
-  }
+  const finalValue =
+    ["title","description"].includes(name)
+      ? capitalizeFirstLetter(value)
+      : value;
+
+  setDocumentForm((current) => {
+    if (name === "type") {
+      return {
+        ...current,
+        type: value,
+        fileUrl: "",
+        content: "",
+      };
+    }
+
+    return { ...current, [name]: finalValue };
+  });
+
+  setDocumentError("");
+}
 
   function handleDocumentFileChange(event) {
     const file = event.target.files?.[0];
@@ -337,24 +380,26 @@ function AdminDashboard() {
   }
   
 
-  const handleCampaignChange = (e) => {
-    const { name, value } = e.target;
+ const handleCampaignChange = (e) => {
+  const { name, value } = e.target;
 
-    if (name === "targetAmount") {
-      // Sirf digits state me store karo
-      const numericValue = value.replace(/\D/g, "");
+  if (name === "targetAmount") {
+    const numericValue = value.replace(/\D/g, "");
 
-      setCampaignForm((prev) => ({
-        ...prev,
-        targetAmount: numericValue,
-      }));
-    } else {
-      setCampaignForm((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+    setCampaignForm((prev) => ({
+      ...prev,
+      targetAmount: numericValue,
+    }));
+  } else {
+    setCampaignForm((prev) => ({
+      ...prev,
+      [name]:
+        ["purpose", "title", "description"].includes(name)
+          ? capitalizeFirstLetter(value)
+          : value,
+    }));
+  }
+};
 
   function editCampaign(campaign) {
     setCampaignForm({
@@ -400,9 +445,16 @@ function AdminDashboard() {
   }
 
   function handleRestorationChange(event) {
-    const { name, value } = event.target;
-    setRestorationForm((current) => ({ ...current, [name]: value }));
-  }
+  const { name, value } = event.target;
+
+  setRestorationForm((current) => ({
+    ...current,
+    [name]:
+      ["title", "description"].includes(name)
+        ? capitalizeFirstLetter(value)
+        : value,
+  }));
+}
 
   function handleRestorationFileChange(event) {
     const files = Array.from(event.target.files || []);
@@ -795,6 +847,7 @@ function AdminDashboard() {
                 type="text"
                 name="donor"
                 value={donationForm.donor}
+                
                 onChange={handleDonationChange}
                 placeholder="Donor name"
                 className="rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-white outline-none placeholder:text-white/35"
@@ -828,7 +881,11 @@ function AdminDashboard() {
                 <input
                   type="text"
                   name="amount"
-                  value={donationForm.amount}
+                   value={
+    donationForm.amount
+      ? Number(donationForm.amount).toLocaleString("en-IN")
+      : ""
+  }
                   onChange={handleDonationChange}
                   placeholder="Amount"
                   className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] py-4 pl-9 pr-4 text-white outline-none placeholder:text-white/35"
