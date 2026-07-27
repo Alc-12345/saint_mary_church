@@ -262,10 +262,10 @@ function Hero() {
                   See how each cause is progressing
                 </h2>
                 <p className="mt-5 text-[1.05rem] leading-[1.9] text-[#6b5a44] md:text-[1.15rem]">
-                  The same four donation purposes available in the form are
-                  shown here with live-style progress, so visitors can clearly
-                  see how much has been raised and how much support is still
-                  needed for each cause.
+                  The donation purposes managed from the admin dashboard are
+                  shown here with live progress, so visitors can clearly see how
+                  much has been raised and how much support is still needed for
+                  each cause.
                 </p>
               </div>
 

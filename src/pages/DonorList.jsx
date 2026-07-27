@@ -21,9 +21,17 @@ export default function DonorList() {
     location.pathname.startsWith("/admin") && Boolean(getAdminToken());
   const [search, setSearch] = useState("");
   const [purpose, setPurpose] = useState("All");
+  const [campaignPurposes, setCampaignPurposes] = useState([]);
   const [selectedDonor, setSelectedDonor] = useState(null);
+  const [selectedPurpose, setSelectedPurpose] = useState("");
   const [donorData, setDonorData] = useState([]);
   const [deleteDonor, setDeleteDonor] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+    window.setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     loadDonors();
@@ -39,24 +47,66 @@ export default function DonorList() {
       console.error(err);
     }
   };
+  const handleSave = async () => {
+    if (!selectedDonor?._id) return;
 
+    try {
+      const res = await apiPatch(`/donations/${selectedDonor._id}`, {
+        purpose: selectedPurpose,
+      });
+
+      setDonorData((current) =>
+        current.map((item) =>
+          item._id === selectedDonor._id ? res.data : item,
+        ),
+      );
+      setSelectedDonor(res.data);
+      setSelectedDonor(null);
+      showToast("success", "Donation purpose updated successfully.");
+    } catch (err) {
+      console.log(err);
+      showToast("error", "Unable to save donation purpose.");
+    }
+  };
+
+  const purposes = useMemo(
+    () => ["All", ...new Set(campaignPurposes)],
+    [campaignPurposes],
+  );
+
+  const editablePurposes = purposes.filter((item) => item !== "All");
+
+  useEffect(() => {
+    loadPurposes();
+  }, []);
+
+  const loadPurposes = async () => {
+    try {
+      const res = await apiGet("/donation-campaigns");
+      setCampaignPurposes(
+        (res.data || []).map((campaign) => campaign.purpose).filter(Boolean),
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const handleDelete = async () => {
-  if (!deleteDonor) return;
+    if (!deleteDonor) return;
 
-  try {
-    setDonorData((prev) =>
-      prev.map((item) =>
-        item._id === deleteDonor._id
-          ? { ...item, isDeleted: true }
-          : item
-      )
-    );
+    try {
+      const res = await apiDelete(`/donations/${deleteDonor._id}`);
 
-    setDeleteDonor(null);
-  } catch (err) {
-    console.error(err);
-  }
-};
+      setDonorData((prev) =>
+        prev.map((item) =>
+          item._id === deleteDonor._id ? res.data : item,
+        ),
+      );
+
+      setDeleteDonor(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const updateDonorDisplay = async (donor, showOnDonorList) => {
     if (!donor?._id) return;
@@ -87,7 +137,7 @@ export default function DonorList() {
     }
   };
 
-  const purposes = ["All", ...new Set(donorData.map((item) => item.purpose))];
+  // const purposes = ["All", ...new Set(donorData.map((item) => item.purpose))];
 
   const filteredDonors = useMemo(() => {
     return donorData.filter((item) => {
@@ -116,6 +166,33 @@ export default function DonorList() {
 
   return (
     <section className="min-h-screen bg-[#120e0b] text-white p-6">
+      {toast && (
+        <div className="fixed right-6 top-6 z-[120] w-[min(92vw,420px)] rounded-[24px] border border-[#d1b06d]/30 bg-[#18120e]/95 p-5 text-white shadow-[0_24px_70px_rgba(0,0,0,0.38)] backdrop-blur-md">
+          <div className="flex items-start gap-4">
+            <div
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
+                toast.type === "success"
+                  ? "bg-[#d1b06d]/18 text-[#ead7a3]"
+                  : "bg-red-500/15 text-red-300"
+              }`}
+            >
+              {toast.type === "success" ? (
+                <FiCheckCircle size={22} />
+              ) : (
+                <FiClock size={22} />
+              )}
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-[#d1b06d]">
+                {toast.type === "success" ? "Saved" : "Update Failed"}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-white/78">
+                {toast.message}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
 
       {/* <div className="rounded-[32px] border border-white/10 bg-[rgba(255,255,255,0.04)] backdrop-blur-md p-8">
@@ -356,39 +433,46 @@ export default function DonorList() {
                 {/* Action */}
 
                 <div className="flex items-center justify-center gap-4">
-  {item.isDeleted ? (
-    <span className="rounded-full bg-red-500/10 border border-red-500/30 px-4 py-2 text-sm font-semibold text-red-400">
-      Deleted
-    </span>
-  ) : (
-    <>
-      <button
-        onClick={() => setSelectedDonor(item)}
-        className="rounded-full bg-[#d1b06d] px-4 py-2 text-[#24170d]"
-      >
-        View
-      </button>
+                  {item.isDeleted ? (
+                    <span className="rounded-full bg-red-500/10 border border-red-500/30 px-4 py-2 text-sm font-semibold text-red-400">
+                      Deleted
+                    </span>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setSelectedDonor(item);
+                          setSelectedPurpose(
+                            editablePurposes.includes(item.purpose)
+                              ? item.purpose
+                              : editablePurposes[0] || item.purpose || "",
+                          );
+                        }}
+                        className="rounded-full bg-[#d1b06d] px-4 py-2 text-[#24170d]"
+                      >
+                        View
+                      </button>
 
-      <button
-        onClick={() => setDeleteDonor(item)}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-red-500/30 bg-red-500/10 text-red-400 transition hover:bg-red-500/20"
-      >
-        <FiTrash2 size={18} />
-      </button>
+                      <button
+                        onClick={() => setDeleteDonor(item)}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-red-500/30 bg-red-500/10 text-red-400 transition hover:bg-red-500/20"
+                      >
+                        <FiTrash2 size={18} />
+                      </button>
 
-      {isAdminView && (
-        <input
-          type="checkbox"
-          checked={Boolean(item.showOnDonorList)}
-          onChange={(e) =>
-            updateDonorDisplay(item, e.target.checked)
-          }
-          className="h-5 w-5 accent-[#d1b06d]"
-        />
-      )}
-    </>
-  )}
-</div>
+                      {isAdminView && (
+                        <input
+                          type="checkbox"
+                          checked={Boolean(item.showOnDonorList)}
+                          onChange={(e) =>
+                            updateDonorDisplay(item, e.target.checked)
+                          }
+                          className="h-5 w-5 accent-[#d1b06d]"
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
 
               {/* Mobile Card */}
@@ -463,7 +547,14 @@ export default function DonorList() {
                     </div>
 
                     <button
-                      onClick={() => setSelectedDonor(item)}
+                      onClick={() => {
+                        setSelectedDonor(item);
+                        setSelectedPurpose(
+                          editablePurposes.includes(item.purpose)
+                            ? item.purpose
+                            : editablePurposes[0] || item.purpose || "",
+                        );
+                      }}
                       className="mt-6 w-full rounded-full bg-[#d1b06d] py-3 font-semibold text-[#24170d]"
                     >
                       View Details
@@ -530,13 +621,16 @@ export default function DonorList() {
                 </p>
 
                 <select
-                  defaultValue={selectedDonor.purpose}
+                  
                   className="mt-3 w-full rounded-xl border border-white/10 bg-[#211913] px-4 py-3 outline-none"
+                  value={selectedPurpose}
+                  onChange={(e) => setSelectedPurpose(e.target.value)}
                 >
-                  <option>Church Restoration</option>
-                  <option>Roof Repair</option>
-                  <option>Children Education</option>
-                  <option>Medical Help</option>
+                  {editablePurposes.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -614,7 +708,7 @@ export default function DonorList() {
                   </span>{" "}
                   for{" "}
                   <span className="font-semibold text-white">
-                    {toTitleCase(selectedDonor.purpose)}
+                    {toTitleCase(selectedPurpose || selectedDonor.purpose)}
                   </span>{" "}
                   through{" "}
                   <span className="font-semibold text-white">
@@ -632,8 +726,12 @@ export default function DonorList() {
                 Cancel
               </button>
 
-              <button className="rounded-full bg-[#d1b06d] px-8 py-3 font-semibold text-[#24170d]">
-                Save Changes
+              <button
+                type="button"
+                onClick={handleSave}
+                className="rounded-full bg-[#d1b06d] px-7 py-4 font-semibold text-[#24170d]"
+              >
+                Save
               </button>
             </div>
           </div>

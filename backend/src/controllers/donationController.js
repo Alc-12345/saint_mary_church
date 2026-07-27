@@ -30,15 +30,12 @@ function getAdminFromRequest(req) {
 
 export async function getAllDonations(req, res) {
   try {
-    const admin = getAdminFromRequest(req);
     const onlyVisibleDonors = req.query.visible === "true";
-    const query =
-      !admin && onlyVisibleDonors
-        ? { showOnDonorList: true, status: "Verified" }
-        : {};
+    const query = onlyVisibleDonors
+      ? { showOnDonorList: true, status: "Verified" }
+      : {};
 
-        let query1 = {}; if (req.query.visible === "true") { query1  = { showOnDonorList: true, }; }
-    const donations = await Donation.find(query1).sort({ createdAt: -1 });
+    const donations = await Donation.find(query).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -49,6 +46,51 @@ export async function getAllDonations(req, res) {
     res.status(500).json({
       success: false,
       message: "Unable to fetch donations.",
+      error: error.message,
+    });
+  }
+}
+
+export async function updateDonation(req, res) {
+  try {
+    const updates = {};
+
+    if (typeof req.body.purpose === "string") {
+      const nextPurpose = titleCase(req.body.purpose);
+      if (!nextPurpose) {
+        return res.status(400).json({
+          success: false,
+          message: "Donation purpose is required.",
+        });
+      }
+      updates.purpose = nextPurpose;
+    }
+
+    if (typeof req.body.showOnDonorList === "boolean") {
+      updates.showOnDonorList = req.body.showOnDonorList;
+    }
+
+    const donation = await Donation.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!donation) {
+      return res.status(404).json({
+        success: false,
+        message: "Donation not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Donation updated successfully.",
+      data: donation,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Unable to update donation.",
       error: error.message,
     });
   }

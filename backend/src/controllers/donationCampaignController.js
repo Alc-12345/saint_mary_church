@@ -1,5 +1,12 @@
 import DonationCampaign from "../models/DonationCampaign.js";
 
+function titleCase(value = "") {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
+}
 
 export async function getDonationCampaigns(req, res) {
   try {
@@ -22,8 +29,8 @@ export async function getDonationCampaigns(req, res) {
 export async function createDonationCampaign(req, res) {
   try {
     const campaign = await DonationCampaign.create({
-      purpose: req.body.purpose,
-      title: req.body.title,
+      purpose: titleCase(req.body.purpose),
+      title: titleCase(req.body.title),
       description: req.body.description || "",
       targetAmount: req.body.targetAmount,
       accentColor: req.body.accentColor || "#c89b5a",
@@ -47,8 +54,8 @@ export async function updateDonationCampaign(req, res) {
     const campaign = await DonationCampaign.findByIdAndUpdate(
       req.params.id,
       {
-        purpose: req.body.purpose,
-        title: req.body.title,
+        purpose: titleCase(req.body.purpose),
+        title: titleCase(req.body.title),
         description: req.body.description || "",
         targetAmount: req.body.targetAmount,
         accentColor: req.body.accentColor || "#c89b5a",
