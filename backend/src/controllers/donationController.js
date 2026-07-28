@@ -9,6 +9,17 @@ function titleCase(value = "") {
     .replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
 }
 
+function normalizeDonationMode(value = "") {
+  const mode = String(value).trim().toLowerCase();
+
+  if (mode === "cash") return "Cash";
+  if (mode === "qr payment" || mode === "qr") return "QR Payment";
+  if (mode === "bank transfer" || mode === "bank") return "Bank Transfer";
+  if (mode === "upi") return "UPI";
+
+  return "UPI";
+}
+
 function getAdminFromRequest(req) {
   if (req.admin) return req.admin;
 
@@ -32,8 +43,8 @@ export async function getAllDonations(req, res) {
   try {
     const onlyVisibleDonors = req.query.visible === "true";
     const query = onlyVisibleDonors
-      ? { showOnDonorList: true, status: "Verified" }
-      : {};
+      ? { showOnDonorList: true, status: "Verified", isDeleted: { $ne: true } }
+      : { isDeleted: { $ne: true } };
 
     const donations = await Donation.find(query).sort({ createdAt: -1 });
 
@@ -103,6 +114,7 @@ export async function createDonation(req, res) {
       ...req.body,
       donor: titleCase(req.body.donor),
       purpose: req.body.purpose ? titleCase(req.body.purpose) : "General Donation",
+      mode: normalizeDonationMode(req.body.mode),
     };
 
     if (admin?.id) {
@@ -202,6 +214,24 @@ export async function deleteDonation(req, res) {
     res.status(500).json({
       success: false,
       message: err.message,
+    });
+  }
+}
+
+export async function deleteAllDonations(req, res) {
+  try {
+    const result = await Donation.deleteMany({});
+
+    res.status(200).json({
+      success: true,
+      message: "All donations deleted.",
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Unable to delete all donations.",
+      error: error.message,
     });
   }
 }

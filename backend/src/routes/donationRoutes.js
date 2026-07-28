@@ -5,8 +5,8 @@ import {
   updateDonation,
   updateDonationDisplay,
   verifyDonation,
-   deleteDonation,
-  
+  deleteAllDonations,
+  deleteDonation,
 } from "../controllers/donationController.js";
 import requireAdminAuth from "../middleware/requireAdminAuth.js";
 
@@ -17,10 +17,7 @@ router.post("/", createDonation);
 router.patch("/:id", requireAdminAuth, updateDonation);
 router.patch("/:id/verify", requireAdminAuth, verifyDonation);
 router.patch("/:id/display", requireAdminAuth, updateDonationDisplay);
-router.delete(
-  "/:id",
-  requireAdminAuth,
-  deleteDonation
-);
+router.delete("/", requireAdminAuth, deleteAllDonations);
+router.delete("/:id", requireAdminAuth, deleteDonation);
 
 export default router;

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createDonationCampaign,
+  deleteAllDonationCampaigns,
   deleteDonationCampaign,
   getDonationCampaigns,
   updateDonationCampaign,
@@ -13,6 +14,7 @@ router.get("/", getDonationCampaigns);
 router.use(requireAdminAuth);
 router.post("/", createDonationCampaign);
 router.put("/:id", updateDonationCampaign);
+router.delete("/", deleteAllDonationCampaigns);
 router.delete("/:id", deleteDonationCampaign);
 
 export default router;

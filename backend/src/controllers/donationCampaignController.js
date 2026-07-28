@@ -92,3 +92,21 @@ export async function deleteDonationCampaign(req, res) {
     });
   }
 }
+
+export async function deleteAllDonationCampaigns(req, res) {
+  try {
+    const result = await DonationCampaign.deleteMany({});
+
+    res.status(200).json({
+      success: true,
+      message: "All donation purposes deleted.",
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Unable to delete all donation purposes.",
+      error: error.message,
+    });
+  }
+}

@@ -95,7 +95,7 @@ function AdminDashboard() {
     phone: "",
     amount: "",
     purpose: "",
-    mode: "UPI",
+    mode: "Cash",
   });
   const [galleryForm, setGalleryForm] = useState({
     title: "",
@@ -525,7 +525,7 @@ function handleGalleryChange(event) {
           donationForm.purpose ||
           (campaigns[0] && campaigns[0].purpose) ||
           "General Donation",
-        mode: donationForm.mode || "UPI",
+        mode: donationForm.mode || "Cash",
       };
 
       const response = await apiPost("/donations", payload);
@@ -537,7 +537,7 @@ function handleGalleryChange(event) {
         phone: "",
         amount: "",
         purpose: campaigns[0]?.purpose || "General Donation",
-        mode: "UPI",
+        mode: "Cash",
       });
       setDonationError("");
     } catch (error) {
