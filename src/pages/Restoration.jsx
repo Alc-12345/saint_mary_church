@@ -46,7 +46,7 @@ function ImageCarousel({
               <img
                 src={section.images[previousIndex]}
                 alt={section.alt}
-                className="h-[280px] w-full object-cover transition duration-500 group-hover:scale-[1.03] md:h-[550px]"
+                className="h-[280px] w-full object-cover transition duration-300 group-hover:scale-[1.03] md:h-[550px]"
               />
               <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(64,42,28,0.08),rgba(64,42,28,0.2)_100%)]" />
             </Link>
@@ -66,7 +66,7 @@ function ImageCarousel({
               <img
                 src={section.images[activeIndex]}
                 alt={section.alt}
-                className="h-[280px] w-full object-cover transition duration-500 hover:scale-[1.03] md:h-[550px]"
+                className="h-[280px] w-full object-cover transition duration-300 hover:scale-[1.03] md:h-[550px]"
               />
             </Link>
 
@@ -221,7 +221,7 @@ function Restoration() {
         <div className="mx-auto max-w-[1380px] px-4 pb-0 pt-28 sm:px-6 md:px-8 md:pt-36">
           <div className="rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-6 py-10 text-center shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] md:px-10 md:py-12">
             <div
-              className={`transition-all duration-700 ${
+              className={`transition-all duration-300 ${
                 showRestorationText
                   ? "translate-y-0 opacity-100"
                   : "translate-y-6 opacity-0"
@@ -243,7 +243,7 @@ function Restoration() {
           <div className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8">
             <div className="pb-6 text-center md:pb-8">
               <div
-                className={`transition-all duration-700 ${
+                className={`transition-all duration-300 ${
                   showRestorationText
                     ? "translate-y-0 opacity-100"
                     : "translate-y-6 opacity-0"
@@ -262,7 +262,7 @@ function Restoration() {
 
             <div className="mx-auto max-w-[1120px] px-2 pb-2 pt-8 text-center md:px-6">
               <div
-                className={`transition-all duration-700 ${
+                className={`transition-all duration-300 ${
                   showRestorationText
                     ? "translate-y-0 opacity-100"
                     : "translate-y-6 opacity-0"
@@ -278,7 +278,7 @@ function Restoration() {
           <div className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8">
             <div className="pb-6 text-center md:pb-8">
               <div
-                className={`transition-all duration-700 ${
+                className={`transition-all duration-300 ${
                   showRestorationText
                     ? "translate-y-0 opacity-100"
                     : "translate-y-6 opacity-0"
@@ -301,7 +301,7 @@ function Restoration() {
 
             <div className="mx-auto max-w-[1120px] px-2 pb-2 pt-8 text-center md:px-6">
               <div
-                className={`transition-all duration-700 ${
+                className={`transition-all duration-300 ${
                   showRestorationText
                     ? "translate-y-0 opacity-100"
                     : "translate-y-6 opacity-0"
@@ -321,7 +321,7 @@ function Restoration() {
             >
               <div className="pb-6 text-center md:pb-8">
                 <div
-                  className={`transition-all duration-700 ${
+                  className={`transition-all duration-300 ${
                     showRestorationText
                       ? "translate-y-0 opacity-100"
                       : "translate-y-6 opacity-0"

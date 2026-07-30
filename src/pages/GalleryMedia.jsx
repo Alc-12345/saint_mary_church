@@ -1,4 +1,4 @@
-﻿import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import churchHero from "../assets/church-home.avif";
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
@@ -42,6 +42,8 @@ function ActiveMedia({ item, title }) {
     <img
       src={item.src}
       alt={item.alt}
+      loading="lazy"
+      decoding="async"
       className="h-[46vh] w-full rounded-[24px] object-cover md:h-[72vh]"
     />
   );
@@ -149,6 +151,8 @@ function GalleryMedia() {
                         <img
                           src={item.poster}
                           alt="Gallery video preview"
+                          loading="lazy"
+                          decoding="async"
                           className="h-36 w-full object-cover"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-[rgba(17,12,8,0.35)] text-xs uppercase tracking-[0.24em] text-white">
@@ -159,6 +163,8 @@ function GalleryMedia() {
                       <img
                         src={item.src}
                         alt={item.alt}
+                        loading="lazy"
+                        decoding="async"
                         className="h-36 w-full object-cover"
                       />
                     )}

@@ -16,7 +16,7 @@ const initialForm = {
   email: "",
   phone: "",
   amount: "",
-  purpose: "",
+  purpose: "General Donation",
 };
 
 function DonateDetails() {
@@ -37,7 +37,7 @@ function DonateDetails() {
         setCampaigns(nextCampaigns);
         setFormData((current) => ({
           ...current,
-          purpose: nextCampaigns[0]?.purpose || current.purpose,
+          purpose: nextCampaigns.length > 0 ? nextCampaigns[0].purpose : "General Donation",
         }));
       })
       .catch((error) => {
@@ -210,6 +210,11 @@ function DonateDetails() {
                       onChange={handleChange}
                       className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-[0.98rem] text-white outline-none sm:text-base"
                     >
+                      {campaigns.length === 0 && (
+                        <option className="text-black" value="General Donation">
+                          General Donation
+                        </option>
+                      )}
                       {campaigns.map((campaign) => (
                         <option
                           key={campaign.id || campaign._id || campaign.purpose}

@@ -111,6 +111,8 @@ function RestorationPhoto() {
                 <img
                   src={activeImage}
                   alt={section.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="h-[46vh] w-full rounded-[24px] object-cover md:h-[72vh]"
                 />
               </div>
@@ -134,6 +136,8 @@ function RestorationPhoto() {
                     <img
                       src={image}
                       alt={section.alt}
+                      loading="lazy"
+                      decoding="async"
                       className="h-36 w-full object-cover"
                     />
                   </Link>
