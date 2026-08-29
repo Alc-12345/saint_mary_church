@@ -7,7 +7,7 @@ export function buildFundingCampaigns(campaigns = [], donations = []) {
       totals[purpose] = (totals[purpose] || 0) + Number(donation.amount || 0);
       return totals;
     }, {});
-
+    
   return campaigns.map((campaign, index) => ({
     ...campaign,
     id: campaign.id || campaign._id || `campaign-${index + 1}`,

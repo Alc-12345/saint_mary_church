@@ -1,4 +1,22 @@
+import { motion } from "framer-motion";
 import churchHome from "../assets/church-home.avif";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const slideInVariant = {
+  hidden: (direction) => ({
+    opacity: 0,
+    x: direction === "left" ? -40 : direction === "right" ? 40 : 0,
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
@@ -67,7 +85,12 @@ function History() {
           <Navbar />
 
           <div className="mx-auto max-w-[1380px] px-4 pb-8 pt-28 sm:px-6 md:px-8 md:pb-10 md:pt-36">
-            <div className="rounded-[34px] border border-white/12 bg-[linear-gradient(135deg,rgba(19,12,8,0.76),rgba(19,12,8,0.5))] px-6 py-10 text-center shadow-[0_32px_100px_rgba(0,0,0,0.24)] backdrop-blur-[10px] md:px-10 md:py-12">
+            <motion.div 
+              variants={fadeUpVariant}
+              initial="hidden"
+              animate="visible"
+              className="rounded-[34px] border border-white/12 bg-[linear-gradient(135deg,rgba(19,12,8,0.76),rgba(19,12,8,0.5))] px-6 py-10 text-center shadow-[0_32px_100px_rgba(0,0,0,0.24)] backdrop-blur-[10px] md:px-10 md:py-12"
+            >
               <p className="text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
                 Heritage Archive
               </p>
@@ -82,7 +105,7 @@ function History() {
                 and chronicles, uncovering the pivotal events, treasured
                 memories, and enduring legacies that define our story.
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -99,9 +122,14 @@ function History() {
           </h3>
 
           <div className="mt-10 space-y-14">
-            {historySections.map((section) => (
-              <section
+            {historySections.map((section, index) => (
+              <motion.section
                 key={section.title}
+                custom={index % 2 === 0 ? "left" : "right"}
+                variants={slideInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.1 }}
                 className="rounded-[30px] border border-[rgba(183,150,79,0.12)] bg-[rgba(250,247,241,0.86)] px-5 py-8 shadow-[0_18px_50px_rgba(83,61,28,0.06)] md:px-8 md:py-10"
               >
                 <h4 className="text-center text-[1.85rem] font-medium text-[#555] md:text-[2.25rem]">
@@ -113,7 +141,7 @@ function History() {
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
-              </section>
+              </motion.section>
             ))}
           </div>
 

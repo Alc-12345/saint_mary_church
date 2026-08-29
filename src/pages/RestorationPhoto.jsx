@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
 import churchHome from "../assets/church-home.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -91,7 +97,12 @@ function RestorationPhoto() {
             </p>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            animate="visible"
+            className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]"
+          >
             <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[rgba(255,255,255,0.04)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="flex items-center justify-between gap-3 px-4 py-4 md:px-8">
                 <ArrowButton
@@ -144,7 +155,7 @@ function RestorationPhoto() {
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         <Footer className="bg-[rgba(17,12,8,0.35)]" />

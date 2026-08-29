@@ -1,4 +1,20 @@
+import { motion } from "framer-motion";
 import churchDonate from "../assets/visitus.avif";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const slideRightVariant = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const slideLeftVariant = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 import Visitback from "../assets/visitbg.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -37,7 +53,12 @@ function Visit() {
           <Navbar />
 
           <div className="mx-auto max-w-[1320px] px-4 pb-8 pt-[112px] sm:px-6 md:px-8 md:pb-10 md:pt-[148px]">
-            <div className="rounded-[34px] border border-white/12 bg-[linear-gradient(135deg,rgba(19,12,8,0.76),rgba(19,12,8,0.5))] px-6 py-10 text-center text-white shadow-[0_32px_100px_rgba(0,0,0,0.24)] backdrop-blur-[10px] md:px-10 md:py-12">
+            <motion.div 
+              variants={fadeUpVariant}
+              initial="hidden"
+              animate="visible"
+              className="rounded-[34px] border border-white/12 bg-[linear-gradient(135deg,rgba(19,12,8,0.76),rgba(19,12,8,0.5))] px-6 py-10 text-center text-white shadow-[0_32px_100px_rgba(0,0,0,0.24)] backdrop-blur-[10px] md:px-10 md:py-12"
+            >
               <p className="text-[0.8rem] uppercase tracking-[0.34em] text-[#ead7a3]">
                 Connect With Us
               </p>
@@ -48,12 +69,18 @@ function Visit() {
                 Find our location, connect with our church representatives, and
                 stand with us in this journey of restoration and hope.
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
 
         <div className="mx-auto max-w-[1320px] px-4 pt-6 sm:px-6 md:px-8">
-          <div className="relative overflow-hidden rounded-[34px] border border-[rgba(183,150,79,0.12)] shadow-[0_28px_90px_rgba(0,0,0,0.14)]">
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.1 }}
+            className="relative overflow-hidden rounded-[34px] border border-[rgba(183,150,79,0.12)] shadow-[0_28px_90px_rgba(0,0,0,0.14)]"
+          >
             <img
               src={churchDonate}
               alt="Saint Mary's Church interior"
@@ -71,12 +98,18 @@ function Visit() {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         <div className="px-4 py-8 sm:px-6 md:px-8 md:py-10">
           <div className="mx-auto grid max-w-[1320px] gap-8 md:grid-cols-[1.08fr_0.92fr]">
-            <div className="rounded-[34px] border border-[rgba(183,150,79,0.14)] bg-[rgba(255,253,249,0.92)] px-6 py-10 shadow-[0_24px_80px_rgba(83,61,28,0.1)] backdrop-blur-[8px] md:px-10 md:py-12">
+            <motion.div 
+              variants={slideRightVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
+              className="rounded-[34px] border border-[rgba(183,150,79,0.14)] bg-[rgba(255,253,249,0.92)] px-6 py-10 shadow-[0_24px_80px_rgba(83,61,28,0.1)] backdrop-blur-[8px] md:px-10 md:py-12"
+            >
               <p className="text-[0.78rem] uppercase tracking-[0.34em] text-[#b7964f]">
                 Support Our Cause
               </p>
@@ -99,9 +132,15 @@ function Visit() {
                 Join us in our efforts to rebuild and spread hope in the
                 community.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="grid gap-8">
+            <motion.div 
+              variants={slideLeftVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
+              className="grid gap-8"
+            >
               <div className="rounded-[34px] border border-[rgba(183,150,79,0.14)] bg-[rgba(255,253,249,0.92)] px-6 py-10 text-center shadow-[0_24px_80px_rgba(83,61,28,0.1)] backdrop-blur-[8px] md:px-10 md:py-12">
                 <p className="text-[0.78rem] uppercase tracking-[0.34em] text-[#b7964f]">
                   Contact Details
@@ -144,12 +183,18 @@ function Visit() {
                   <p className="mt-1 font-semibold text-[#5f5a54]">305001</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 
         <div className="px-4 pb-0 pt-2 sm:px-6 md:px-8">
-          <div className="mx-auto overflow-hidden rounded-[34px] border border-[rgba(183,150,79,0.12)] bg-[#ece7dc] shadow-[0_24px_80px_rgba(83,61,28,0.1)] max-w-[1320px]">
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            className="mx-auto overflow-hidden rounded-[34px] border border-[rgba(183,150,79,0.12)] bg-[#ece7dc] shadow-[0_24px_80px_rgba(83,61,28,0.1)] max-w-[1320px]"
+          >
             <iframe
               title="Saint Mary's Church Ajmer map"
               src="https://www.google.com/maps?q=Saint%20Mary's%20Church%20CNI%20Ajmer&z=15&output=embed"
@@ -157,7 +202,7 @@ function Visit() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-          </div>
+          </motion.div>
         </div>
 
         <div className="pt-14 md:pt-18">

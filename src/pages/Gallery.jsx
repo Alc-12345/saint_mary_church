@@ -1,4 +1,15 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const scaleFadeVariant = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.7, ease: "easeOut" } },
+};
 import churchHero from "../assets/church-home.avif";
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
@@ -32,7 +43,13 @@ function getCardClasses(sectionLayout, index, totalItems) {
 
 function GallerySectionHeader({ title, subtitle }) {
   return (
-    <div className="border-b border-white/10 bg-[linear-gradient(180deg,rgba(19,12,8,0.82),rgba(19,12,8,0.7))] px-5 py-10 text-center text-white md:px-8 md:py-12">
+    <motion.div 
+      variants={fadeUpVariant}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, amount: 0.3 }}
+      className="border-b border-white/10 bg-[linear-gradient(180deg,rgba(19,12,8,0.82),rgba(19,12,8,0.7))] px-5 py-10 text-center text-white md:px-8 md:py-12"
+    >
       <p className="text-[0.78rem] uppercase tracking-[0.34em] text-[#e2c98d] md:text-[0.86rem]">
         Saint Mary&apos;s Church
       </p>
@@ -42,7 +59,7 @@ function GallerySectionHeader({ title, subtitle }) {
       <p className="mx-auto mt-5 max-w-3xl text-base italic text-white/82 md:text-[1.25rem]">
         {subtitle}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -50,7 +67,11 @@ function GalleryCard({ item, sectionSlug, sectionLayout, index, totalItems }) {
   const cardClasses = getCardClasses(sectionLayout, index, totalItems);
 
   return (
-    <article
+    <motion.article
+      variants={scaleFadeVariant}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, amount: 0.2 }}
       className={`group relative overflow-hidden rounded-[28px] border border-white/10 bg-[#1e1712] shadow-[0_24px_70px_rgba(0,0,0,0.24)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(0,0,0,0.3)] ${cardClasses}`}
     >
       {item.type === "video" ? (
@@ -90,13 +111,19 @@ function GalleryCard({ item, sectionSlug, sectionLayout, index, totalItems }) {
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(17,12,8,0.03),rgba(17,12,8,0.14)_58%,rgba(17,12,8,0.38)_100%)]" />
         </Link>
       )}
-    </article>
+    </motion.article>
   );
 }
 
 function GallerySection({ section }) {
   return (
-    <div className="mb-12 rounded-[34px] border border-white/10 bg-[rgba(23,16,12,0.52)] shadow-[0_28px_90px_rgba(0,0,0,0.2)] backdrop-blur-[10px] md:mb-16">
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, amount: 0.1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="mb-12 rounded-[34px] border border-white/10 bg-[rgba(23,16,12,0.52)] shadow-[0_28px_90px_rgba(0,0,0,0.2)] backdrop-blur-[10px] md:mb-16"
+    >
       <GallerySectionHeader title={section.title} subtitle={section.subtitle} />
       <div className="grid grid-cols-1 gap-5 px-3 py-5 md:grid-cols-2 md:gap-6 md:px-5 md:py-6">
         {section.previewItems.map((item, index) => (
@@ -110,7 +137,7 @@ function GallerySection({ section }) {
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -140,7 +167,12 @@ function Gallery() {
         <Navbar />
 
         <div className="mx-auto max-w-[1380px] px-4 pb-0 pt-28 md:px-6 md:pt-36">
-          <div className="mb-10 rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,rgba(19,12,8,0.78),rgba(19,12,8,0.52))] px-6 py-10 text-center text-white shadow-[0_30px_100px_rgba(0,0,0,0.24)] backdrop-blur-[12px] md:mb-14 md:px-10 md:py-12">
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            animate="visible"
+            className="mb-10 rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,rgba(19,12,8,0.78),rgba(19,12,8,0.52))] px-6 py-10 text-center text-white shadow-[0_30px_100px_rgba(0,0,0,0.24)] backdrop-blur-[12px] md:mb-14 md:px-10 md:py-12"
+          >
             <p className="text-[0.78rem] uppercase tracking-[0.36em] text-[#ead7a3] md:text-[0.9rem]">
               Photo Archive
             </p>
@@ -151,7 +183,7 @@ function Gallery() {
               A visual journey through Saint Mary&apos;s Church before and after
               the fire, preserving moments of beauty, loss, and resilience.
             </p>
-          </div>
+          </motion.div>
 
           {sections.map((section) => (
             <GallerySection key={section.slug} section={section} />

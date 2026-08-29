@@ -1,5 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const slideInVariant = {
+  hidden: (direction) => ({
+    opacity: 0,
+    x: direction === "left" ? -40 : direction === "right" ? 40 : 0,
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 import churchHome from "../assets/church-home.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -182,19 +200,9 @@ function ImageCarousel({
 
 function Restoration() {
   const [sections, setSections] = useState(restorationSections);
-  const [showRestorationText, setShowRestorationText] = useState(false);
-
   const canopySection = sections[0];
   const gazeboSection = sections[1];
   const extraSections = sections.slice(2);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowRestorationText(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     apiGet("/restoration")
@@ -219,14 +227,13 @@ function Restoration() {
         <Navbar />
 
         <div className="mx-auto max-w-[1380px] px-4 pb-0 pt-28 sm:px-6 md:px-8 md:pt-36">
-          <div className="rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-6 py-10 text-center shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] md:px-10 md:py-12">
-            <div
-              className={`transition-all duration-300 ${
-                showRestorationText
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-6 opacity-0"
-              }`}
-            >
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            animate="visible"
+            className="rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-6 py-10 text-center shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] md:px-10 md:py-12"
+          >
+            <div>
               <p className="text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
                 Renewal Journey
               </p>
@@ -238,17 +245,18 @@ function Restoration() {
                 sustained through faithful support and community resilience.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8">
+          <motion.div 
+            custom="left"
+            variants={slideInVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.1 }}
+            className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8"
+          >
             <div className="pb-6 text-center md:pb-8">
-              <div
-                className={`transition-all duration-300 ${
-                  showRestorationText
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-6 opacity-0"
-                }`}
-              >
+              <div>
                 <p className="text-[0.8rem] uppercase tracking-[0.34em] text-[#ead7a3]">
                   Featured Update
                 </p>
@@ -261,29 +269,24 @@ function Restoration() {
             <ImageCarousel section={canopySection} variant="split" />
 
             <div className="mx-auto max-w-[1120px] px-2 pb-2 pt-8 text-center md:px-6">
-              <div
-                className={`transition-all duration-300 ${
-                  showRestorationText
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-6 opacity-0"
-                }`}
-              >
+              <div>
                 <p className="text-[1.08rem] leading-[1.85] text-white/86 md:text-[1.24rem]">
                   {canopySection.description}
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8">
+          <motion.div 
+            custom="right"
+            variants={slideInVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.1 }}
+            className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8"
+          >
             <div className="pb-6 text-center md:pb-8">
-              <div
-                className={`transition-all duration-300 ${
-                  showRestorationText
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-6 opacity-0"
-                }`}
-              >
+              <div>
                 <p className="text-[0.8rem] uppercase tracking-[0.34em] text-[#ead7a3]">
                   Community Initiative
                 </p>
@@ -300,33 +303,26 @@ function Restoration() {
             />
 
             <div className="mx-auto max-w-[1120px] px-2 pb-2 pt-8 text-center md:px-6">
-              <div
-                className={`transition-all duration-300 ${
-                  showRestorationText
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-6 opacity-0"
-                }`}
-              >
+              <div>
                 <p className="text-[1.08rem] leading-[1.85] text-white/86 md:text-[1.24rem]">
                   {gazeboSection.description}
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {extraSections.map((section) => (
-            <div
+          {extraSections.map((section, index) => (
+            <motion.div
               key={section.slug}
+              custom={index % 2 === 0 ? "left" : "right"}
+              variants={slideInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
               className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8"
             >
               <div className="pb-6 text-center md:pb-8">
-                <div
-                  className={`transition-all duration-300 ${
-                    showRestorationText
-                      ? "translate-y-0 opacity-100"
-                      : "translate-y-6 opacity-0"
-                  }`}
-                >
+                <div>
                   <p className="text-[0.8rem] uppercase tracking-[0.34em] text-[#ead7a3]">
                     Restoration Update
                   </p>
@@ -347,7 +343,7 @@ function Restoration() {
                   {section.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

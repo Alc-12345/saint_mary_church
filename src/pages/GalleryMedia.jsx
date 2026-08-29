@@ -1,4 +1,19 @@
 import { Link, Navigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const mainCardVariant = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (custom) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, delay: custom * 0.05, ease: "easeOut" }
+  })
+};
 import churchHero from "../assets/church-home.avif";
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
@@ -104,7 +119,12 @@ function GalleryMedia() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_440px]">
-            <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[rgba(255,255,255,0.04)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+            <motion.div 
+              variants={mainCardVariant}
+              initial="hidden"
+              animate="visible"
+              className="overflow-hidden rounded-[30px] border border-white/10 bg-[rgba(255,255,255,0.04)] shadow-[0_30px_80px_rgba(0,0,0,0.35)]"
+            >
               <div className="flex items-center justify-between gap-3 px-4 py-4 md:px-8">
                 <ArrowButton
                   direction="prev"
@@ -127,9 +147,14 @@ function GalleryMedia() {
               <div className="px-4 pb-4 md:px-8 md:pb-8">
                 <ActiveMedia item={activeItem} title={section.title} />
               </div>
-            </div>
+            </motion.div>
 
-            <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.05)] p-4">
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.05)] p-4"
+            >
               <p className="mb-4 text-sm uppercase tracking-[0.25em] text-[#d8c6a0]">
                 All media
               </p>
@@ -137,9 +162,15 @@ function GalleryMedia() {
                 className={`grid max-h-[72vh] ${thumbnailGridClass} gap-4 overflow-y-auto pr-2`}
               >
                 {section.media.map((item, index) => (
-                  <Link
+                  <motion.div
                     key={`${section.slug}-${item.id}`}
-                    to={`/gallery/${section.slug}/${index}`}
+                    custom={index}
+                    variants={fadeUpVariant}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <Link
+                      to={`/gallery/${section.slug}/${index}`}
                     className={`relative overflow-hidden rounded-[18px] border transition ${
                       index === activeIndex
                         ? "border-[#d8c6a0]"
@@ -168,10 +199,11 @@ function GalleryMedia() {
                         className="h-36 w-full object-cover"
                       />
                     )}
-                  </Link>
+                    </Link>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 

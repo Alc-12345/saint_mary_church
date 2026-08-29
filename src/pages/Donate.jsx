@@ -1,5 +1,25 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const slideInVariant = {
+  hidden: (direction) => ({
+    opacity: 0,
+    x: direction === "left" ? -40 : direction === "right" ? 40 : direction === "up" ? 40 : 0,
+    y: direction === "up" ? 40 : 0
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 import qrImage from "../assets/scanner.avif";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -47,17 +67,29 @@ function Donate() {
         <Navbar />
 
         <div className="mx-auto max-w-[1380px] px-4 pb-24 pt-28 sm:px-6 md:px-8 md:pb-0 md:pt-44">
-          <div className="mb-10 flex justify-center md:mb-14">
-            <button
-              
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="mb-10 flex justify-center md:mb-14"
+          >
+            <Link
+              to="/donate/details"
               className="inline-flex rounded-full border border-[#d1b06d] bg-[#d1b06d] px-10 py-5 text-sm font-bold uppercase tracking-[0.24em] text-[#24170d] shadow-[0_10px_30px_rgba(209,176,109,0.3)] transition hover:bg-[#e2c98d] hover:shadow-[0_10px_40px_rgba(209,176,109,0.45)] sm:px-12 sm:text-base md:px-16 md:py-6 md:text-[1.1rem]"
             >
               Start Donation
-            </button>
-          </div>
+            </Link>
+          </motion.div>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-8">
-            <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-5 py-8 shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12 flex flex-col justify-between">
+            <motion.div 
+              custom="left"
+              variants={slideInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
+              className="rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-5 py-8 shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12 flex flex-col justify-between"
+            >
               <div>
                 <p className="text-center text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
                   Support The Restoration
@@ -101,9 +133,16 @@ function Donate() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12 flex flex-col justify-between">
+            <motion.div 
+              custom="right"
+              variants={slideInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
+              className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12 flex flex-col justify-between"
+            >
               <div>
                 <p className="text-center text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
                   Ways To Contribute
@@ -174,10 +213,16 @@ function Donate() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="mt-8 rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12">
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            className="mt-8 rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12"
+          >
             <p className="text-center text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
               For Every Donor
             </p>
@@ -201,10 +246,17 @@ function Donate() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           <div className="mt-8 grid gap-6 md:grid-cols-[1.05fr_0.95fr] md:gap-8">
-            <div className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12">
+            <motion.div 
+              custom="left"
+              variants={slideInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.2 }}
+              className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12"
+            >
               <p className="text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
                 Donor Information
               </p>
@@ -222,9 +274,16 @@ function Donate() {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
-            <div className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12">
+            <motion.div 
+              custom="right"
+              variants={slideInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.2 }}
+              className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-8 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12"
+            >
               <p className="text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
                 Donation Support
               </p>
@@ -247,7 +306,7 @@ function Donate() {
                   contact the church team for guidance.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 

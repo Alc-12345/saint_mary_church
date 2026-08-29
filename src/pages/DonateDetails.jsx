@@ -1,4 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
+const slideInVariant = {
+  hidden: (direction) => ({
+    opacity: 0,
+    x: direction === "left" ? -30 : direction === "right" ? 30 : 0,
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 import qrImage from "../assets/scanner.avif";
 import churchHome from "../assets/church-home.avif";
 import Footer from "../components/Footer";
@@ -84,7 +102,7 @@ function DonateDetails() {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         amount: Number(formData.amount),
-        purpose: toTitleCase(formData.purpose),
+        purpose: formData.purpose,
         mode: "QR Payment",
         status: "Pending Receipt",
       });
@@ -114,7 +132,12 @@ function DonateDetails() {
         <Navbar />
 
         <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-28 sm:px-6 md:px-8 md:pb-0 md:pt-36">
-          <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-5 py-8 text-center shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12">
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            animate="visible"
+            className="rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-5 py-8 text-center shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] sm:px-6 md:rounded-[34px] md:px-10 md:py-12"
+          >
             <p className="text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
               Donation Form
             </p>
@@ -125,10 +148,17 @@ function DonateDetails() {
               Fill your details first, then the QR code and payment step will
               appear below so you can complete your donation smoothly.
             </p>
-          </div>
+          </motion.div>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.95fr] lg:gap-8">
-            <div className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-7 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-8">
+            <motion.div 
+              custom="left"
+              variants={slideInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
+              className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-7 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-8"
+            >
               <p className="text-[0.8rem] uppercase tracking-[0.34em] text-[#ead7a3]">
                 Donor Details
               </p>
@@ -208,17 +238,16 @@ function DonateDetails() {
                       name="purpose"
                       value={formData.purpose}
                       onChange={handleChange}
-                      className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-[0.98rem] text-white outline-none sm:text-base"
+                      className="w-full rounded-[18px] border border-white/10 bg-[rgba(255,255,255,0.05)] px-4 py-4 text-[0.98rem] text-white outline-none sm:text-base [&>option]:text-black"
                     >
-                      {campaigns.length === 0 && (
-                        <option className="text-black" value="General Donation">
-                          General Donation
-                        </option>
-                      )}
-                      {campaigns.map((campaign) => (
+                      <option value="General Donation">
+                        General Donation
+                      </option>
+                      {campaigns
+                        .filter((c) => c.purpose !== "General Donation")
+                        .map((campaign) => (
                         <option
                           key={campaign.id || campaign._id || campaign.purpose}
-                          className="text-black"
                           value={campaign.purpose}
                         >
                           {campaign.purpose}
@@ -243,9 +272,16 @@ function DonateDetails() {
                   <p className="text-sm text-[#f0b7b7]">{submitError}</p>
                 )}
               </form>
-            </div>
+            </motion.div>
 
-            <div className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-7 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-8">
+            <motion.div 
+              custom="right"
+              variants={slideInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false, amount: 0.1 }}
+              className="rounded-[28px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-5 py-7 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] sm:px-6 md:rounded-[34px] md:px-10 md:py-8"
+            >
               <p className="text-[0.8rem] uppercase tracking-[0.34em] text-[#ead7a3]">
                 Payment Step
               </p>
@@ -285,7 +321,7 @@ function DonateDetails() {
 
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
 

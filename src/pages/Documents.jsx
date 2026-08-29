@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 import churchHome from "../assets/church-home.avif";
 import reportCover from "../assets/image.png";
 import Footer from "../components/Footer";
@@ -159,7 +165,12 @@ function Documents() {
         <Navbar />
 
         <div className="mx-auto w-full max-w-[1380px] flex-1 px-4 pb-12 pt-28 sm:px-6 md:px-8 md:pb-16 md:pt-36">
-          <div className="rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-6 py-10 text-center shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] md:px-10 md:py-12">
+          <motion.div 
+            variants={fadeUpVariant}
+            initial="hidden"
+            animate="visible"
+            className="rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,rgba(18,14,12,0.8),rgba(18,14,12,0.58))] px-6 py-10 text-center shadow-[0_32px_100px_rgba(0,0,0,0.26)] backdrop-blur-[12px] md:px-10 md:py-12"
+          >
             <p className="text-[0.8rem] uppercase tracking-[0.36em] text-[#ead7a3]">
               Reports & Appeals
             </p>
@@ -170,19 +181,33 @@ function Documents() {
               Explore official reports, restoration documents, and appeals
               connected to the recovery of Saint Mary&apos;s Church, Ajmer.
             </p>
-          </div>
+          </motion.div>
 
           <div className="mt-8 rounded-[34px] border border-white/10 bg-[rgba(18,14,12,0.6)] px-4 py-6 shadow-[0_28px_90px_rgba(0,0,0,0.22)] backdrop-blur-[10px] md:px-8 md:py-8">
             <div className="mx-auto max-w-[1120px]">
-              <PdfCard
-                to="/documents/0"
-                publishedAt={pdfDocuments[0]?.publishedAt}
-                coverImage={pdfDocuments[0]?.coverImage}
-                title="Preliminary Project Report_Saint Mary&apos;s Church by INTACH Delhi"
-              />
+              <motion.div 
+                variants={fadeUpVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.1 }}
+              >
+                <PdfCard
+                  to="/documents/0"
+                  publishedAt={pdfDocuments[0]?.publishedAt}
+                  coverImage={pdfDocuments[0]?.coverImage}
+                  title="Preliminary Project Report_Saint Mary&apos;s Church by INTACH Delhi"
+                />
+              </motion.div>
 
               {pdfDocuments.slice(1).map((item, index) => (
-                <div key={item.id} className="mt-8">
+                <motion.div 
+                  key={item.id} 
+                  className="mt-8"
+                  variants={fadeUpVariant}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: false, amount: 0.1 }}
+                >
                   <PdfCard
                     to={`/documents/${index + 1}`}
                     publishedAt={item.publishedAt}
@@ -193,7 +218,7 @@ function Documents() {
                     description={item.description}
                     publishedAt={item.publishedAt}
                   />
-                </div>
+                </motion.div>
               ))}
 
               <div
@@ -294,7 +319,14 @@ function Documents() {
               </div>
 
               {letterDocuments.map((item) => (
-                <div key={item._id} className="mt-14">
+                <motion.div 
+                  key={item._id} 
+                  className="mt-14"
+                  variants={fadeUpVariant}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: false, amount: 0.1 }}
+                >
                   {item.fileUrl ? (
                     <LetterPdfCard href={item.fileUrl} title={item.title} />
                   ) : (
@@ -304,7 +336,7 @@ function Documents() {
                     description={item.description}
                     publishedAt={item.publishedAt || item.updatedAt || item.createdAt}
                   />
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
